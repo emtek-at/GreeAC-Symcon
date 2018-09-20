@@ -1,4 +1,12 @@
 <?
+abstract class Commands
+{
+    const none = -1;
+    const scan = 0;
+    const bind = 1;
+    // etc.
+}
+
 // Klassendefinition
 class sinclair extends IPSModule {
 
@@ -7,7 +15,7 @@ class sinclair extends IPSModule {
     private $deviceName = '';
     private $deviceKey = '';
 
-    private $actualCommand = '';
+    private $actualCommand = Commands::none;
 
     // Der Konstruktor des Moduls
     // Überschreibt den Standard Kontruktor von IPS
@@ -74,30 +82,49 @@ class sinclair extends IPSModule {
 
     public function ReceiveData($JSONString){
         $this->SendDebug('ReceiveData', $JSONString, 0);
-        $rec = json_decode($JSONString);
 
-        //if($rec->DataID == '018EF6B5-AB94-40C6-AA53-46943E824ACF') {
-            $data = json_decode($rec->Buffer);
-
-            $decrypted = $this->decrpyt($data->pack);
-            $decObj = json_decode($decrypted);
+        $recObj = json_decode($JSONString);
+        $bufferObj = json_decode($recObj->Buffer);
+        $decrypted = $this->decrpyt($bufferObj->pack, $this->deviceKey);
+        $decObj = json_decode($decrypted);
 
         $this->SendDebug('Pack decrypted', $decrypted, 0);
 
-        $this->deviceMac = $decObj->mac;
-        $this->deviceName = $decObj->name;
-            $this->SendDebug('AC MAC', $decObj->mac, 0);
-            $this->SendDebug('AC Name', $decObj->name, 0);
-        //}
+
+        switch($this->actualCommand){
+            case Commands::scan:
+                $this->deviceMac = $decObj->mac;
+                $this->deviceName = $decObj->name;
+
+                SetValueString($this->GetIDForIdent('macAddress'), $this->deviceMac);
+                SetValueString($this->GetIDForIdent('name'), $this->deviceName);
+                $this->SendDebug('AC MAC', $decObj->mac, 0);
+                $this->SendDebug('AC Name', $decObj->name, 0);
+                break;
+        }
+
+        $this->actualCommand = Commands::none;
+    }
+
+    private function sendCommand($type, $cmdArr){
+        if($this->actualCommand != Commands::none)
+            return false;
+
+        $this->actualCommand = $type;
+
+        $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
+
+        return true;
     }
 
 
     public function test() {
         // Selbsterstellter Code
         $arr = array('t' => 'scan');
-        //$this->SendDataToParent(json_encode($arr));
-        $r = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($arr))));
-        $this->SendDebug('sdp return', $r, 0);
+        //$r = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($arr))));
+        //$this->SendDebug('sdp return', $r, 0);
+
+        $this->sendCommand(Commands::scan, $arr);
     }
 
 
@@ -109,12 +136,14 @@ class sinclair extends IPSModule {
 
 
 
-    private function decrpyt( $message, $key=defaultCryptKey )
-    {
+    private function decrpyt( $message, $key ){
+        if($key == '')
+            $key = defaultCryptKey;
+
         $decrypt = openssl_decrypt(
             base64_decode( $message ),
             "aes-128-ecb",
-            'a3K8Bx%2r8Y7#xDh',
+            $key,
             OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING
         );
 
@@ -136,6 +165,24 @@ class sinclair extends IPSModule {
                 0,
                 $decrypt_len - $decrypt_padchar
             );
+    }
+
+    private function encrypt( $message, $key ){
+        if($key == '')
+            $key = defaultCryptKey;
+
+        $blocksize = 16;
+        $encrypt_padchar = $blocksize - ( strlen( $message ) % $blocksize );
+        $message .= str_repeat( chr( $encrypt_padchar ), $encrypt_padchar );
+
+        return base64_encode(
+            openssl_encrypt(
+                $message,
+                "aes-128-ecb",
+                $key,
+                OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING
+            )
+        );
     }
 }
 ?>
