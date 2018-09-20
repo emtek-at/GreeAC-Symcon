@@ -106,8 +106,8 @@ class sinclair extends IPSModule {
     {
         $decrypt = openssl_decrypt(
             base64_decode( $message ),
-            "aes-256-ecb",
-            $key,
+            "aes-128-ecb",
+            'a3K8Bx%2r8Y7#xDh',
             OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING
         );
 
