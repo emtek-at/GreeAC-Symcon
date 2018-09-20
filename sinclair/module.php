@@ -89,6 +89,7 @@ class sinclair extends IPSModule {
         $decObj = json_decode($decrypted);
 
         $this->SendDebug('Pack decrypted', $decrypted, 0);
+        $this->SendDebug('actualCommand', $this->actualCommand, 0);
 
 
         switch($this->actualCommand){
