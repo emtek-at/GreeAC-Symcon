@@ -3,6 +3,11 @@
 class sinclair extends IPSModule {
 
     const defaultCryptKey = 'a3K8Bx%2r8Y7#xDh';
+    private $deviceMac = '';
+    private $deviceName = '';
+    private $deviceKey = '';
+
+    private $actualCommand = '';
 
     // Der Konstruktor des Moduls
     // Überschreibt den Standard Kontruktor von IPS
@@ -79,6 +84,8 @@ class sinclair extends IPSModule {
 
         $this->SendDebug('Pack decrypted', $decrypted, 0);
 
+        $this->deviceMac = $decObj->mac;
+        $this->deviceName = $decObj->name;
             $this->SendDebug('AC MAC', $decObj->mac, 0);
             $this->SendDebug('AC Name', $decObj->name, 0);
         //}
@@ -89,7 +96,7 @@ class sinclair extends IPSModule {
         // Selbsterstellter Code
         $arr = array('t' => 'scan');
         //$this->SendDataToParent(json_encode($arr));
-        $r = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => "{\"t\":\"scan\"}")));
+        $r = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($arr))));
         $this->SendDebug('sdp return', $r, 0);
     }
 
