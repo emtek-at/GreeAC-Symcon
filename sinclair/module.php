@@ -44,14 +44,10 @@ class sinclair extends IPSModule {
 
             $this->SendDebug('host', $host, 0);
 
-            $bindInterval = $this->ReadPropertyInteger("bindTimer");
-            $this->SendDebug('Update Bind Interval', $bindInterval.' sec', 0);
-
             $statusInterval = $this->ReadPropertyInteger("statusTimer");
             $this->SendDebug('Update Status Interval', $statusInterval.' sec', 0);
 
-            $this->SetTimerInterval('bind_UpdateTimer', $bindInterval*1000);
-            $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
+            //$this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
 
             $this->SetStatus(102);
         }
