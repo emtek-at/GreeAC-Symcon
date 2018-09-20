@@ -112,6 +112,7 @@ class sinclair extends IPSModule {
     }
 
     public function RequestAction($Ident, $Value) {
+        $this->deviceGetStatus();
         $this->SendDebug('RequestAction', 'ja', 0);
         $this->SendDebug('RequestAction', $Ident.': '.$Value, 0);
         switch($Ident) {
