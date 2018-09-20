@@ -138,7 +138,7 @@ class sinclair extends IPSModule {
 
     private function decrpyt( $message, $key ){
         if($key == '')
-            $key = 'a3K8Bx%2r8Y7#xDh';
+            $key = self::defaultCryptKey;
 
         $decrypt = openssl_decrypt(
             base64_decode( $message ),
@@ -169,7 +169,7 @@ class sinclair extends IPSModule {
 
     private function encrypt( $message, $key ){
         if($key == '')
-            $key = defaultCryptKey;
+            $key = self::defaultCryptKey;
 
         $blocksize = 16;
         $encrypt_padchar = $blocksize - ( strlen( $message ) % $blocksize );
