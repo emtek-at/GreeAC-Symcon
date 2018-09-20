@@ -2,6 +2,8 @@
 // Klassendefinition
 class sinclair extends IPSModule {
 
+    const defaultCryptKey = 'a3K8Bx%2r8Y7#xDh';
+
     // Der Konstruktor des Moduls
     // Überschreibt den Standard Kontruktor von IPS
     public function __construct($InstanceID) {
@@ -69,11 +71,13 @@ class sinclair extends IPSModule {
         $this->SendDebug('ReceiveData', $JSONString, 0);
         $rec = json_decode($JSONString);
 
-        if($rec->DataID == '018EF6B5-AB94-40C6-AA53-46943E824ACF') {
+        //if($rec->DataID == '018EF6B5-AB94-40C6-AA53-46943E824ACF') {
             $data = json_decode($rec->Buffer);
-            $this->SendDebug('AC MAC', $data->mac, 0);
-            $this->SendDebug('AC Name', $data->name, 0);
-        }
+            $o = print_r($data, true);
+            $this->SendDebug('Buffer', $o, 0);
+            //$this->SendDebug('AC MAC', $data->mac, 0);
+            //$this->SendDebug('AC Name', $data->name, 0);
+        //}
     }
 
 
@@ -90,6 +94,37 @@ class sinclair extends IPSModule {
         $this->SendDebug('getStatus', '0', 0);
 
         SetValueString($this->GetIDForIdent('lastUpdate'), date("Y-m-d H:i:s"));
+    }
+
+
+
+    private function decrpyt( $message, $key=defaultCryptKey )
+    {
+        $decrypt = openssl_decrypt(
+            base64_decode( $message ),
+            "aes-256-ecb",
+            $key,
+            OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING
+        );
+
+        // remove zero padding
+        $decrypt = rtrim( $decrypt, "\x00" );
+        // remove PKCS #7 padding
+        $decrypt_len = strlen( $decrypt );
+        $decrypt_padchar = ord( $decrypt[ $decrypt_len - 1 ] );
+        for ( $i = 0; $i < $decrypt_padchar ; $i++ )
+        {
+            if ( $decrypt_padchar != ord( $decrypt[$decrypt_len - $i - 1] ) )
+                break;
+        }
+        if ( $i != $decrypt_padchar )
+            return $decrypt;
+        else
+            return substr(
+                $decrypt,
+                0,
+                $decrypt_len - $decrypt_padchar
+            );
     }
 }
 ?>
