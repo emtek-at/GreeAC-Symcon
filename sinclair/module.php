@@ -112,7 +112,8 @@ class sinclair extends IPSModule {
     }
 
     public function RequestAction($Ident, $Value) {
-
+        $this->SendDebug('RequestAction', 'ja', 0);
+        $this->SendDebug('RequestAction', $Ident.': '.$Value, 0);
         switch($Ident) {
             case "TestVariable":
                 //Hier würde normalerweise eine Aktion z.B. das Schalten ausgeführt werden
