@@ -138,7 +138,7 @@ class sinclair extends IPSModule {
 
     private function decrpyt( $message, $key ){
         if($key == '')
-            $key = defaultCryptKey;
+            $key = 'a3K8Bx%2r8Y7#xDh';
 
         $decrypt = openssl_decrypt(
             base64_decode( $message ),
