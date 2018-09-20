@@ -77,6 +77,7 @@ class sinclair extends IPSModule {
             $this->SendDebug('Buffer', $o, 0);
 
             $decrypted = $this->decrpyt($data->pack);
+        $this->SendDebug('Pack encrypted', $data->pack, 0);
         $this->SendDebug('Pack decrypted', $decrypted, 0);
             //$this->SendDebug('AC MAC', $data->mac, 0);
             //$this->SendDebug('AC Name', $data->name, 0);
