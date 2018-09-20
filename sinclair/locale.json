@@ -5,6 +5,7 @@
       "formStatusTimer": "getStatus Intervall Sek.",
       "form201": "Host nicht angegeben",
       "varActualCommand": "cmd",
+      "varDeviceKey": "DeviceKey",
       "varPower": "eingeschalten",
       "varLastUpdate": "letzte Aktualisierung",
       "varMacAddress": "MAC",

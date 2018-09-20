@@ -34,6 +34,7 @@ class sinclair extends IPSModule {
         $this->RegisterPropertyInteger("statusTimer", 60*2);
 
         $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"));
+        $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"));
 
         $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"));
         $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"));
@@ -100,6 +101,8 @@ class sinclair extends IPSModule {
                 $this->SendDebug('AC MAC', $decObj->mac, 0);
                 $this->SendDebug('AC Name', $decObj->name, 0);
                 break;
+            case Commands::bind:
+                break;
         }
 
         SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
@@ -134,6 +137,29 @@ class sinclair extends IPSModule {
         SetValueString($this->GetIDForIdent('lastUpdate'), date("Y-m-d H:i:s"));
     }
 
+    public function deviceScan(){
+        $arr = array('t' => 'scan');
+        $this->sendCommand(Commands::scan, $arr);
+    }
+    public function deviceBind(){
+        $pack = array('t' => 'bind', 'uid' => 0, 'mac' => GetValueString($this->GetIDForIdent('macAddress')));
+        $this->sendCommand(Commands::scan, $this->getRequest($pack, true));
+    }
+
+    private function getRequest($pack, $bDefKey=true){
+        $key = $bDefKey ? self::defaultCryptKey : GetValueString($this->GetIDForIdent('deviceKey'));
+
+        $arr = array(
+            'cid' => 'app',
+            'i' => $bDefKey ? 1 : 0,
+            'pack' => $this->encrypt(json_encode($pack), $key),
+            't' => 'pack',
+            'tcid' => GetValueString($this->GetIDForIdent('macAddress')),
+            'uid' => 22130
+        );
+
+        return $arr;
+    }
 
 
     private function decrpyt( $message, $key ){
