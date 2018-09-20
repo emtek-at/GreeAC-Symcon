@@ -51,24 +51,23 @@ class sinclair extends IPSModule {
         $this->RegisterPropertyString("host", "");
         $this->RegisterPropertyInteger("statusTimer", 60);
 
-        $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"));
-        $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"));
-
-        $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"));
-        $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"));
-        $this->RegisterVariableString("name", $this->Translate("varName"));
-        $this->RegisterVariableBoolean("power", $this->Translate("varPower"));
+        $this->RegisterVariableString("name", $this->Translate("varName"), '', 1);
+        $this->RegisterVariableBoolean("power", $this->Translate("varPower"), '', 2);
         //mode
         //fan
         //swinger
-        $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"));
-        $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"));
-        $this->RegisterVariableBoolean("optDry", $this->Translate("varOptDry"));
-        $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"));
-        $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"));
-        $this->RegisterVariableBoolean("optSleep", $this->Translate("varOptSleep"));
-        $this->RegisterVariableBoolean("optEco", $this->Translate("varOptEco"));
-        $this->RegisterVariableBoolean("optAir", $this->Translate("varOptAir"));
+        $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), '', 6);
+        $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), '', 7);
+        $this->RegisterVariableBoolean("optDry", $this->Translate("varOptDry"), '', 8);
+        $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '', 9);
+        $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"), '', 10);
+        $this->RegisterVariableBoolean("optSleep", $this->Translate("varOptSleep"), '', 11);
+        $this->RegisterVariableBoolean("optEco", $this->Translate("varOptEco"), '', 12);
+        $this->RegisterVariableBoolean("optAir", $this->Translate("varOptAir"), '', 13);
+        $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"), '', 14);
+        $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"), '', 15);
+        $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"), '', 16);
+        $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"), '', 17);
 
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'SAW_getStatus($_IPS[\'TARGET\']);');
@@ -112,6 +111,22 @@ class sinclair extends IPSModule {
         return $Json;
     }
 
+    public function RequestAction($Ident, $Value) {
+
+        switch($Ident) {
+            case "TestVariable":
+                //Hier würde normalerweise eine Aktion z.B. das Schalten ausgeführt werden
+                //Ausgaben über 'echo' werden an die Visualisierung zurückgeleitet
+
+                //Neuen Wert in die Statusvariable schreiben
+                SetValue($this->GetIDForIdent($Ident), $Value);
+                break;
+            default:
+                $this->SendDebug('RequestAction', $Ident.': '.$Value, 0);
+                break;
+        }
+
+    }
 
     public function ReceiveData($JSONString){
         $actCmd = GetValueInteger($this->GetIDForIdent('actualCommand'));
