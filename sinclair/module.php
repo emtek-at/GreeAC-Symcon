@@ -73,14 +73,14 @@ class sinclair extends IPSModule {
 
         //if($rec->DataID == '018EF6B5-AB94-40C6-AA53-46943E824ACF') {
             $data = json_decode($rec->Buffer);
-            $o = print_r($data, true);
-            $this->SendDebug('Buffer', $o, 0);
 
             $decrypted = $this->decrpyt($data->pack);
-        $this->SendDebug('Pack encrypted', $data->pack, 0);
+            $decObj = json_decode($decrypted);
+
         $this->SendDebug('Pack decrypted', $decrypted, 0);
-            //$this->SendDebug('AC MAC', $data->mac, 0);
-            //$this->SendDebug('AC Name', $data->name, 0);
+
+            $this->SendDebug('AC MAC', $decObj->mac, 0);
+            $this->SendDebug('AC Name', $decObj->name, 0);
         //}
     }
 
