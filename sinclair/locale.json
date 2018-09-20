@@ -9,7 +9,15 @@
       "varPower": "eingeschalten",
       "varLastUpdate": "letzte Aktualisierung",
       "varMacAddress": "MAC",
-      "varName": "Name"
+      "varName": "Name",
+      "varSetTemp": "Soll Temperatur",
+      "varActTemp": "Ist Temperatur",
+      "varOptDry": "Trocknen",
+      "varOptHealth": "Health",
+      "varOptLight": "Licht",
+      "varOptSleep": "Sleep",
+      "varOptEco": "Eco",
+      "varOptAir": "Air"
     }
   }
 }

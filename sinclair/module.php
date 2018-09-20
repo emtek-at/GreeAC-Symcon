@@ -49,7 +49,7 @@ class sinclair extends IPSModule {
         parent::Create();
 
         $this->RegisterPropertyString("host", "");
-        $this->RegisterPropertyInteger("statusTimer", 60*2);
+        $this->RegisterPropertyInteger("statusTimer", 60);
 
         $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"));
         $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"));
@@ -58,6 +58,17 @@ class sinclair extends IPSModule {
         $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"));
         $this->RegisterVariableString("name", $this->Translate("varName"));
         $this->RegisterVariableBoolean("power", $this->Translate("varPower"));
+        //mode
+        //fan
+        //swinger
+        $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"));
+        $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"));
+        $this->RegisterVariableBoolean("optDry", $this->Translate("varOptDry"));
+        $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"));
+        $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"));
+        $this->RegisterVariableBoolean("optSleep", $this->Translate("varOptSleep"));
+        $this->RegisterVariableBoolean("optEco", $this->Translate("varOptEco"));
+        $this->RegisterVariableBoolean("optAir", $this->Translate("varOptAir"));
 
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'SAW_getStatus($_IPS[\'TARGET\']);');
@@ -84,6 +95,8 @@ class sinclair extends IPSModule {
             //$this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
             SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
 
+            $this->deviceScan();
+
             $this->SetStatus(102);
         }
         else
@@ -102,6 +115,7 @@ class sinclair extends IPSModule {
 
     public function ReceiveData($JSONString){
         $actCmd = GetValueInteger($this->GetIDForIdent('actualCommand'));
+        SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
 
         $this->SendDebug('ReceiveData', $JSONString, 0);
 
@@ -123,6 +137,8 @@ class sinclair extends IPSModule {
 
                 $this->SendDebug('AC MAC', $decObj->mac, 0);
                 $this->SendDebug('AC Name', $decObj->name, 0);
+
+                $this->deviceBind();
                 break;
             case Commands::bind:
                 SetValueString($this->GetIDForIdent('deviceKey'), $decObj->key);
@@ -135,8 +151,6 @@ class sinclair extends IPSModule {
                 SetValueString($this->GetIDForIdent('lastUpdate'), date("Y-m-d H:i:s"));
                 break;
         }
-
-        SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
     }
 
     private function sendCommand($type, $cmdArr){
@@ -186,13 +200,45 @@ class sinclair extends IPSModule {
     }
 
 
-
-
     private function parseStatus($cols, $dats){
         for($i=0;$i<count($cols);$i++){
             switch($cols[$i]){
                 case DeviceParam::Power:
                     SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
+                    break;
+                /*case DeviceParam::Mode:
+                    SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
+                    break;
+                case DeviceParam::Fanspeed:
+                    SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
+                    break;
+                case DeviceParam::Swinger:
+                    SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
+                    break;*/
+                case DeviceParam::SetTemperature:
+                    SetValueBoolean($this->GetIDForIdent('setTemp'), $dats[$i]!=0 ? true : false);
+                    break;
+                case DeviceParam::ActTemperature:
+                    SetValueBoolean($this->GetIDForIdent('actTemp'), $dats[$i]!=0 ? true : false);
+                    break;
+                case DeviceParam::OptDry:
+                    SetValueBoolean($this->GetIDForIdent('optDry'), $dats[$i]!=0 ? true : false);
+                    break;
+                case DeviceParam::OptHealth:
+                    SetValueBoolean($this->GetIDForIdent('optHealth'), $dats[$i]!=0 ? true : false);
+                    break;
+                case DeviceParam::OptLight:
+                    SetValueBoolean($this->GetIDForIdent('optLight'), $dats[$i]!=0 ? true : false);
+                    break;
+                case DeviceParam::OptSleep1:
+                case DeviceParam::OptSleep2:
+                    SetValueBoolean($this->GetIDForIdent('optSleep'), $dats[$i]!=0 ? true : false);
+                    break;
+                case DeviceParam::OptEco:
+                    SetValueBoolean($this->GetIDForIdent('optEco'), $dats[$i]!=0 ? true : false);
+                    break;
+                case DeviceParam::OptAir:
+                    SetValueBoolean($this->GetIDForIdent('optAir'), $dats[$i]!=0 ? true : false);
                     break;
             }
         }
