@@ -4,7 +4,25 @@ abstract class Commands
     const none = -1;
     const scan = 0;
     const bind = 1;
+    const status = 2;
     // etc.
+}
+
+abstract class DeviceParam
+{
+    const Power = "Pow";
+    const Mode = "Mod";
+    const Fanspeed = "WdSpd";
+    const Swinger = "SwUpDn";
+    const SetTemperature = "SetTem";
+    const ActTemperature = "TemSen";
+    const OptDry = "Blo";
+    const OptHealth = "Health";
+    const OptLight = "Lig";
+    const OptSleep1 = "SwhSlp";
+    const OptSleep2 = "SlpMod";
+    const OptEco = "SvSt";
+    const OptAir = "Air";
 }
 
 // Klassendefinition
@@ -102,6 +120,12 @@ class sinclair extends IPSModule {
                 $this->SendDebug('AC Name', $decObj->name, 0);
                 break;
             case Commands::bind:
+                SetValueString($this->GetIDForIdent('deviceKey'), $decObj->key);
+
+                $this->SendDebug('AC DeviceKey', $decObj->key, 0);
+                break;
+            case Commands::status:
+                SetValueString($this->GetIDForIdent('lastUpdate'), date("Y-m-d H:i:s"));
                 break;
         }
 
@@ -131,20 +155,35 @@ class sinclair extends IPSModule {
     }
 
 
-    public function getStatus(){
-        $this->SendDebug('getStatus', '0', 0);
 
-        SetValueString($this->GetIDForIdent('lastUpdate'), date("Y-m-d H:i:s"));
-    }
 
     public function deviceScan(){
         $arr = array('t' => 'scan');
         $this->sendCommand(Commands::scan, $arr);
     }
     public function deviceBind(){
-        $pack = array('t' => 'bind', 'uid' => 0, 'mac' => GetValueString($this->GetIDForIdent('macAddress')));
-        $this->sendCommand(Commands::scan, $this->getRequest($pack, true));
+        $pack = array(
+            't' => 'bind',
+            'uid' => 0,
+            'mac' => GetValueString($this->GetIDForIdent('macAddress'))
+        );
+        $this->sendCommand(Commands::bind, $this->getRequest($pack, true));
     }
+    public function deviceGetStatus(){
+        /*
+         * reqStatus.cols = new string[] { DeviceParam.Power, DeviceParam.Mode, DeviceParam.SetTemperature, DeviceParam.ActTemperature, DeviceParam.Fanspeed, DeviceParam.Swinger, DeviceParam.OptAir, DeviceParam.OptDry, DeviceParam.OptEco, DeviceParam.OptHealth, DeviceParam.OptLight, DeviceParam.OptSleep1 };
+            reqStatus.mac = this.m_mac;
+            reqStatus.t = "status";
+         */
+        $pack = array(
+            't' => 'status',
+            'mac' => GetValueString($this->GetIDForIdent('macAddress')),
+            'cols' => array(DeviceParam::Power, DeviceParam::Mode, DeviceParam::SetTemperature, DeviceParam::ActTemperature, DeviceParam::Fanspeed, DeviceParam::Swinger, DeviceParam::OptAir, DeviceParam::OptDry, DeviceParam::OptEco, DeviceParam::OptHealth, DeviceParam::OptLight, DeviceParam::OptSleep1)
+        );
+        $this->sendCommand(Commands::status, $this->getRequest($pack, false));
+    }
+
+
 
     private function getRequest($pack, $bDefKey=true){
         $key = $bDefKey ? self::defaultCryptKey : GetValueString($this->GetIDForIdent('deviceKey'));
@@ -160,7 +199,6 @@ class sinclair extends IPSModule {
 
         return $arr;
     }
-
 
     private function decrpyt( $message, $key ){
         if($key == '')
