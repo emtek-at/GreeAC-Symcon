@@ -216,10 +216,10 @@ class sinclair extends IPSModule {
                     SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
                     break;*/
                 case DeviceParam::SetTemperature:
-                    SetValueBoolean($this->GetIDForIdent('setTemp'), $dats[$i]!=0 ? true : false);
+                    SetValueInteger($this->GetIDForIdent('setTemp'), $dats[$i]);
                     break;
                 case DeviceParam::ActTemperature:
-                    SetValueBoolean($this->GetIDForIdent('actTemp'), $dats[$i]!=0 ? true : false);
+                    SetValueInteger($this->GetIDForIdent('actTemp'), $dats[$i]-40);
                     break;
                 case DeviceParam::OptDry:
                     SetValueBoolean($this->GetIDForIdent('optDry'), $dats[$i]!=0 ? true : false);
