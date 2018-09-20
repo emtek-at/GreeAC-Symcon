@@ -101,17 +101,22 @@ class sinclair extends IPSModule {
 
 
     public function ReceiveData($JSONString){
+        $actCmd = GetValueInteger($this->GetIDForIdent('actualCommand'));
+
         $this->SendDebug('ReceiveData', $JSONString, 0);
 
         $recObj = json_decode($JSONString);
         $bufferObj = json_decode($recObj->Buffer);
-        $decrypted = $this->decrpyt($bufferObj->pack, $this->deviceKey);
+
+        $key = $actCmd < Commands::status ? self::defaultCryptKey : GetValueString($this->GetIDForIdent('deviceKey'));
+
+        $decrypted = $this->decrpyt($bufferObj->pack, $key);
         $decObj = json_decode($decrypted);
 
         $this->SendDebug('Pack decrypted', $decrypted, 0);
 
 
-        switch(GetValueInteger($this->GetIDForIdent('actualCommand'))){
+        switch($actCmd){
             case Commands::scan:
                 SetValueString($this->GetIDForIdent('macAddress'), $decObj->mac);
                 SetValueString($this->GetIDForIdent('name'), $decObj->name);
