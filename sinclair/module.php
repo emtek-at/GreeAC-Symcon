@@ -88,6 +88,7 @@ class sinclair extends IPSModule {
             $this->RegisterTimer("status_UpdateTimer", 0, 'SAW_getStatus($_IPS[\'TARGET\']);');
 
             $this->EnableAction("setTemp");
+            $this->EnableAction("optDry");
 
 
 
@@ -118,19 +119,18 @@ class sinclair extends IPSModule {
     }
 
     public function RequestAction($Ident, $Value) {
-        $this->deviceGetStatus();
-        $this->SendDebug('RequestAction', 'ja', 0);
+        //$this->deviceGetStatus();
+        //$this->SendDebug('RequestAction', 'ja', 0);
         $this->SendDebug('RequestAction', $Ident.': '.$Value, 0);
         switch($Ident) {
             case "setTemp":
                 $this->deviceGetStatus();
 
                 //Neuen Wert in die Statusvariable schreiben
-                SetValue($this->GetIDForIdent($Ident), $Value);
+                //SetValue($this->GetIDForIdent($Ident), $Value);
                 break;
             default:
-                $this->SendDebug('RequestAction', $Ident.': '.$Value, 0);
-                break;
+                throw new Exception("Invalid ident");
         }
 
     }
