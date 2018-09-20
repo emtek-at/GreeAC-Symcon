@@ -69,6 +69,8 @@ class sinclair extends IPSModule {
         $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"), '', 16);
         $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"), '', 17);
 
+        $this->EnableAction("setTemp");
+
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'SAW_getStatus($_IPS[\'TARGET\']);');
 
@@ -116,9 +118,8 @@ class sinclair extends IPSModule {
         $this->SendDebug('RequestAction', 'ja', 0);
         $this->SendDebug('RequestAction', $Ident.': '.$Value, 0);
         switch($Ident) {
-            case "TestVariable":
-                //Hier würde normalerweise eine Aktion z.B. das Schalten ausgeführt werden
-                //Ausgaben über 'echo' werden an die Visualisierung zurückgeleitet
+            case "setTemp":
+                $this->deviceGetStatus();
 
                 //Neuen Wert in die Statusvariable schreiben
                 SetValue($this->GetIDForIdent($Ident), $Value);
