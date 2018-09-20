@@ -1,11 +1,11 @@
 {
-  "id": "{6cba374d-a3a6-4f1f-8bd6-e6955cfbf78e}",
+  "id": "{3284FE06-61F1-4702-B15D-F2C5ACE35C36}",
   "name": "sinclair",
   "type": 3,
   "vendor": "Sinclair",
   "aliases": [ "Sinclair AC Wifi" ],
-  "parentRequirements": [],
+  "parentRequirements": ["{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}"],
   "childRequirements": [],
-  "implemented": [],
-  "prefix": "ESC"
+  "implemented": ["{018EF6B5-AB94-40C6-AA53-46943E824ACF}"],
+  "prefix": "SAW"
 }

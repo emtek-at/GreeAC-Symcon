@@ -19,11 +19,16 @@ class sinclair extends IPSModule {
         parent::Create();
 
         $this->RegisterPropertyString("host", "");
-        $this->RegisterPropertyInteger("bindTimer", 60*10);
         $this->RegisterPropertyInteger("statusTimer", 60*2);
 
-        $this->RegisterTimer("bind_UpdateTimer", 0, 'ETM_bind($_IPS[\'TARGET\']);');
-        $this->RegisterTimer("status_UpdateTimer", 0, 'ETM_getStatus($_IPS[\'TARGET\']);');
+        $this->RegisterVariableBoolean("power", $this->Translate("varPower"));
+        $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"));
+        $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"));
+        $this->RegisterVariableString("name", $this->Translate("varName"));
+
+        $this->RegisterTimer("status_UpdateTimer", 0, 'SAW_getStatus($_IPS[\'TARGET\']);');
+
+        $this->RequireParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
     }
 
     // Überschreibt die intere IPS_ApplyChanges($id) Funktion
@@ -32,11 +37,12 @@ class sinclair extends IPSModule {
         parent::ApplyChanges();
 
         $host = $this->ReadPropertyString("host");
-        $this->SendDebug('host', $host, 0);
         if (strlen($host) > 0)
         {
             //Instanz ist aktiv
-            $this->SetStatus(101);
+            //$this->SetStatus(101);
+
+            $this->SendDebug('host', $host, 0);
 
             $bindInterval = $this->ReadPropertyInteger("bindTimer");
             $this->SendDebug('Update Bind Interval', $bindInterval.' sec', 0);
@@ -47,6 +53,7 @@ class sinclair extends IPSModule {
             $this->SetTimerInterval('bind_UpdateTimer', $bindInterval*1000);
             $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
 
+            $this->SetStatus(102);
         }
         else
         {
@@ -55,24 +62,37 @@ class sinclair extends IPSModule {
         }
     }
 
-    /**
-     * Die folgenden Funktionen stehen automatisch zur Verfügung, wenn das Modul über die "Module Control" eingefügt wurden.
-     * Die Funktionen werden, mit dem selbst eingerichteten Prefix, in PHP und JSON-RPC wiefolgt zur Verfügung gestellt:
-     *
-     * ABC_MeineErsteEigeneFunktion($id);
-     *
-     */
-    public function MeineErsteEigeneFunktion() {
-        // Selbsterstellter Code
-        $this->SendDebug('testmsg', 'data3', 0);
+    public function GetConfigurationForParent(){
+        $JsonArray = array( "Host" => $this->ReadPropertyString('host'), "Port" => 7000, "Open" => true);
+        $Json = json_encode($JsonArray);
+        return $Json;
     }
 
-    public function bind(){
-        $this->SendDebug('bind', '0', 0);
+
+    public function ReceiveData($JSONString){
+        $rec = json_decode($JSONString);
+        if($rec->DataId == '018EF6B5-AB94-40C6-AA53-46943E824ACF') {
+            $this->SendDebug('ReceiveData', $JSONString, 0);
+            $data = json_decode($rec->Buffer);
+            $this->SendDebug('AC MAC', $data->mac);
+            $this->SendDebug('AC Name', $data->name);
+        }
     }
+
+
+    public function test() {
+        // Selbsterstellter Code
+        $arr = array('t' => 'scan');
+        //$this->SendDataToParent(json_encode($arr));
+        $r = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => "{\"t\":\"scan\"}")));
+        $this->SendDebug('sdp return', $r, 0);
+    }
+
 
     public function getStatus(){
         $this->SendDebug('getStatus', '0', 0);
+
+        SetValueString($this->GetIDForIdent('lastUpdate'), date("Y-m-d H:i:s"));
     }
 }
 ?>
