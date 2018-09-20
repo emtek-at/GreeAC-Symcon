@@ -1,0 +1,11 @@
+{
+  "id": "{6cba374d-a3a6-4f1f-8bd6-e6955cfbf78e}",
+  "name": "sinclair",
+  "type": 3,
+  "vendor": "Sinclair",
+  "aliases": [ "Sinclair AC Wifi" ],
+  "parentRequirements": [],
+  "childRequirements": [],
+  "implemented": [],
+  "prefix": "ESC"
+}

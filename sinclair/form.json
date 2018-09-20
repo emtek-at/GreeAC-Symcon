@@ -1,0 +1,16 @@
+{
+  "elements":
+  [
+    { "type": "ValidationTextBox", "name": "host", "caption": "Host/IP" },
+    { "type": "NumberSpinner", "name": "bindTimer", "caption": "Bind Intervall Sekunden" },
+    { "type": "NumberSpinner", "name": "statusTimer", "caption": "getStatus Intervall Sekunden" }
+  ],
+  "actions":
+  [
+  ],
+  "status":
+  [
+    { "code": 101, "icon": "active", "caption": "valid" },
+    { "code": 201, "icon": "error", "caption": "Host nicht angegeben" }
+  ]
+}
