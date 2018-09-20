@@ -11,11 +11,8 @@ abstract class Commands
 class sinclair extends IPSModule {
 
     const defaultCryptKey = 'a3K8Bx%2r8Y7#xDh';
-    private $deviceMac = '';
-    private $deviceName = '';
     private $deviceKey = '';
 
-    private $actualCommand = Commands::none;
 
     // Der Konstruktor des Moduls
     // Überschreibt den Standard Kontruktor von IPS
@@ -36,10 +33,13 @@ class sinclair extends IPSModule {
         $this->RegisterPropertyString("host", "");
         $this->RegisterPropertyInteger("statusTimer", 60*2);
 
-        $this->RegisterVariableBoolean("power", $this->Translate("varPower"));
+        $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"));
+
         $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"));
         $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"));
         $this->RegisterVariableString("name", $this->Translate("varName"));
+        $this->RegisterVariableBoolean("power", $this->Translate("varPower"));
+
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'SAW_getStatus($_IPS[\'TARGET\']);');
 
@@ -63,6 +63,7 @@ class sinclair extends IPSModule {
             $this->SendDebug('Update Status Interval', $statusInterval.' sec', 0);
 
             //$this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
+            SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
 
             $this->SetStatus(102);
         }
@@ -89,32 +90,29 @@ class sinclair extends IPSModule {
         $decObj = json_decode($decrypted);
 
         $this->SendDebug('Pack decrypted', $decrypted, 0);
-        $this->SendDebug('actualCommand', $this->actualCommand, 0);
 
 
-        switch($this->actualCommand){
+        switch(GetValueInteger($this->GetIDForIdent('actualCommand'))){
             case Commands::scan:
-                $this->deviceMac = $decObj->mac;
-                $this->deviceName = $decObj->name;
+                SetValueString($this->GetIDForIdent('macAddress'), $decObj->mac);
+                SetValueString($this->GetIDForIdent('name'), $decObj->name);
 
-                SetValueString($this->GetIDForIdent('macAddress'), $this->deviceMac);
-                SetValueString($this->GetIDForIdent('name'), $this->deviceName);
                 $this->SendDebug('AC MAC', $decObj->mac, 0);
                 $this->SendDebug('AC Name', $decObj->name, 0);
                 break;
         }
 
-        $this->actualCommand = Commands::none;
+        SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
     }
 
     private function sendCommand($type, $cmdArr){
-        if($this->actualCommand != Commands::none)
+        if(GetValueInteger($this->GetIDForIdent('actualCommand')) != Commands::none)
             return false;
 
-        $this->actualCommand = $type;
-        $this->SendDebug('actualCommand1', $this->actualCommand.'-'.$type, 0);
+        SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
 
         $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
+        // starte timer und resete actual command
 
         return true;
     }
