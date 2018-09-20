@@ -130,6 +130,8 @@ class sinclair extends IPSModule {
                 $this->SendDebug('AC DeviceKey', $decObj->key, 0);
                 break;
             case Commands::status:
+                $this->parseStatus($decObj->cols, $decObj->dat);
+
                 SetValueString($this->GetIDForIdent('lastUpdate'), date("Y-m-d H:i:s"));
                 break;
         }
@@ -175,11 +177,6 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::bind, $this->getRequest($pack, true));
     }
     public function deviceGetStatus(){
-        /*
-         * reqStatus.cols = new string[] { DeviceParam.Power, DeviceParam.Mode, DeviceParam.SetTemperature, DeviceParam.ActTemperature, DeviceParam.Fanspeed, DeviceParam.Swinger, DeviceParam.OptAir, DeviceParam.OptDry, DeviceParam.OptEco, DeviceParam.OptHealth, DeviceParam.OptLight, DeviceParam.OptSleep1 };
-            reqStatus.mac = this.m_mac;
-            reqStatus.t = "status";
-         */
         $pack = array(
             't' => 'status',
             'mac' => GetValueString($this->GetIDForIdent('macAddress')),
@@ -189,6 +186,17 @@ class sinclair extends IPSModule {
     }
 
 
+
+
+    private function parseStatus($cols, $dats){
+        for($i=0;$i<count($cols);$i++){
+            switch($cols[$i]){
+                case DeviceParam::Power:
+                    SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
+                    break;
+            }
+        }
+    }
 
     private function getRequest($pack, $bDefKey=true){
         $key = $bDefKey ? self::defaultCryptKey : GetValueString($this->GetIDForIdent('deviceKey'));
@@ -235,7 +243,6 @@ class sinclair extends IPSModule {
                 $decrypt_len - $decrypt_padchar
             );
     }
-
     private function encrypt( $message, $key ){
         if($key == '')
             $key = self::defaultCryptKey;
