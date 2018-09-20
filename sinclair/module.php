@@ -68,7 +68,13 @@ class sinclair extends IPSModule {
     public function ReceiveData($JSONString){
         $this->SendDebug('ReceiveData', $JSONString, 0);
         $rec = json_decode($JSONString);
-        $this->SendDebug('DataId', $rec->DataId, 0);
+
+        $o = print_r($JSONString, true);
+        $this->SendDebug('js', $o, 0);
+
+        $o = print_r($rec, true);
+        $this->SendDebug('object', $o, 0);
+
         if($rec->DataId == '018EF6B5-AB94-40C6-AA53-46943E824ACF') {
             $data = json_decode($rec->Buffer);
             $this->SendDebug('AC MAC', $data->mac, 0);
