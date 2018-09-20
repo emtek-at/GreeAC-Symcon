@@ -51,28 +51,7 @@ class sinclair extends IPSModule {
         $this->RegisterPropertyString("host", "");
         $this->RegisterPropertyInteger("statusTimer", 60);
 
-        $this->RegisterVariableString("name", $this->Translate("varName"), '', 1);
-        $this->RegisterVariableBoolean("power", $this->Translate("varPower"), '', 2);
-        //mode
-        //fan
-        //swinger
-        $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), '', 6);
-        $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), '', 7);
-        $this->RegisterVariableBoolean("optDry", $this->Translate("varOptDry"), '', 8);
-        $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '', 9);
-        $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"), '', 10);
-        $this->RegisterVariableBoolean("optSleep", $this->Translate("varOptSleep"), '', 11);
-        $this->RegisterVariableBoolean("optEco", $this->Translate("varOptEco"), '', 12);
-        $this->RegisterVariableBoolean("optAir", $this->Translate("varOptAir"), '', 13);
-        $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"), '', 14);
-        $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"), '', 15);
-        $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"), '', 16);
-        $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"), '', 17);
 
-        $this->EnableAction("setTemp");
-
-
-        $this->RegisterTimer("status_UpdateTimer", 0, 'SAW_getStatus($_IPS[\'TARGET\']);');
 
         $this->RequireParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
     }
@@ -87,6 +66,31 @@ class sinclair extends IPSModule {
         {
             //Instanz ist aktiv
             //$this->SetStatus(101);
+
+            $this->RegisterVariableString("name", $this->Translate("varName"), '', 1);
+            $this->RegisterVariableBoolean("power", $this->Translate("varPower"), '', 2);
+            //mode
+            //fan
+            //swinger
+            $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), '', 6);
+            $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), '', 7);
+            $this->RegisterVariableBoolean("optDry", $this->Translate("varOptDry"), '', 8);
+            $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '', 9);
+            $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"), '', 10);
+            $this->RegisterVariableBoolean("optSleep", $this->Translate("varOptSleep"), '', 11);
+            $this->RegisterVariableBoolean("optEco", $this->Translate("varOptEco"), '', 12);
+            $this->RegisterVariableBoolean("optAir", $this->Translate("varOptAir"), '', 13);
+            $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"), '', 14);
+            $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"), '', 15);
+            $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"), '', 16);
+            $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"), '', 17);
+
+            $this->RegisterTimer("status_UpdateTimer", 0, 'SAW_getStatus($_IPS[\'TARGET\']);');
+
+            $this->EnableAction("setTemp");
+
+
+
 
             $this->SendDebug('host', $host, 0);
 
