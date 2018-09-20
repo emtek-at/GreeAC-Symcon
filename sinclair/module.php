@@ -112,6 +112,7 @@ class sinclair extends IPSModule {
             return false;
 
         $this->actualCommand = $type;
+        $this->SendDebug('actualCommand1', $this->actualCommand.'-'.$type, 0);
 
         $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
 
