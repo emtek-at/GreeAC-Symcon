@@ -6,7 +6,6 @@ abstract class Commands
     const bind = 1;
     const status = 2;
     const cmd = 3;
-    // etc.
 }
 
 abstract class DeviceParam
@@ -143,17 +142,17 @@ class sinclair extends IPSModule {
             IPS_SetHidden($this->GetIDForIdent('actualCommand'), true);
 
 
-            $this->SendDebug('host', $host, 0);
+            $this->debug('host', $host);
 
             $statusInterval = $this->ReadPropertyInteger("statusTimer");
-            $this->SendDebug('Update Status Interval', $statusInterval.' sec', 0);
+            $this->debug('Update Status Interval', $statusInterval.' sec');
 
             //$this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
             SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
 
             //$this->deviceScan();
             $ap = $this->HasActiveParent();
-            $this->SendDebug('PA', $ap, 0);
+            $this->debug('PA', $ap);
 
             $this->SetStatus(102);
         }
@@ -171,13 +170,40 @@ class sinclair extends IPSModule {
     }
 
     public function RequestAction($Ident, $Value) {
-        $this->SendDebug('RequestAction', $Ident.': '.$Value, 0);
+        $this->debug('RequestAction', $Ident.': '.$Value);
         switch($Ident) {
-            case "setTemp":
-                $this->deviceGetStatus();
+            case 'power':
+                $this->setPower($Value);
+                break;
+            case 'mode':
+                $this->setMode($Value);
+                break;
+            case 'fan':
+                $this->setFan($Value);
+                break;
+            case 'swinger':
+                $this->setSwinger($Value);
+                break;
+            case 'setTemp':
+                $this->setTemp($Value);
+                break;
+            case 'optDry':
+                $this->setOptDry($Value);
+                break;
+            case 'optHealth':
+                $this->setOptHealth($Value);
                 break;
             case 'optLight':
                 $this->setOptLight($Value);
+                break;
+            case 'optSleep':
+                $this->setOptSleep($Value);
+                break;
+            case 'optEco':
+                $this->setOptEco($Value);
+                break;
+            case 'optAir':
+                $this->setOptAir($Value);
                 break;
             default:
                 throw new Exception("Invalid ident");
@@ -189,7 +215,7 @@ class sinclair extends IPSModule {
         $actCmd = GetValueInteger($this->GetIDForIdent('actualCommand'));
         SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
 
-        $this->SendDebug('ReceiveData', $JSONString, 0);
+        $this->debug('ReceiveData', $JSONString);
 
         $recObj = json_decode($JSONString);
         $bufferObj = json_decode($recObj->Buffer);
@@ -199,23 +225,24 @@ class sinclair extends IPSModule {
         $decrypted = $this->decrpyt($bufferObj->pack, $key);
         $decObj = json_decode($decrypted);
 
-        $this->SendDebug('Pack decrypted', $decrypted, 0);
+        $this->debug('Pack decrypted', $decrypted);
 
 
         switch($actCmd){
             case Commands::scan:
-                SetValueString($this->GetIDForIdent('macAddress'), $decObj->mac);
+                $mac = implode(':', str_split($decObj->mac, 2));
+                SetValueString($this->GetIDForIdent('macAddress'), $mac);
                 SetValueString($this->GetIDForIdent('name'), $decObj->name);
 
-                $this->SendDebug('AC MAC', $decObj->mac, 0);
-                $this->SendDebug('AC Name', $decObj->name, 0);
+                $this->debug('AC MAC', $mac);
+                $this->debug('AC Name', $decObj->name);
 
                 $this->deviceBind();
                 break;
             case Commands::bind:
                 SetValueString($this->GetIDForIdent('deviceKey'), $decObj->key);
 
-                $this->SendDebug('AC DeviceKey', $decObj->key, 0);
+                $this->debug('AC DeviceKey', $decObj->key);
                 break;
             case Commands::status:
                 $this->parseStatus($decObj->cols, $decObj->dat);
@@ -233,7 +260,7 @@ class sinclair extends IPSModule {
             return false;
 
         $ap = $this->HasActiveParent();
-        $this->SendDebug('PA', $ap, 0);
+        $this->debug('PA', $ap);
 
         SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
 
@@ -267,8 +294,49 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::status, $this->getRequest($pack, false));
     }
 
+
+    public function setPower(bool $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::Power, DeviceParam::OptSleep1, DeviceParam::OptSleep2, DeviceParam::OptAir), array($newVal ? 1 : 0, 0, 0, 0));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
+    public function setMode(int $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::Mode), array($newVal));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
+    public function setFan(int $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::Fanspeed, "Quiet", "Tur"), array($newVal, 0, 0));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
+    public function setSwinger(int $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::Swinger), array($newVal));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
+    public function setTemp(int $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::SetTemperature), array($newVal));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
+    public function setOptDry(bool $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::OptDry), array($newVal ? 1 : 0));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
+    public function setOptHealth(bool $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::OptHealth), array($newVal ? 1 : 0));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
     public function setOptLight(bool $newVal){
         $cmd = $this->getCommand(array(DeviceParam::OptLight), array($newVal ? 1 : 0));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
+    public function setOptSleep(bool $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::OptSleep1, DeviceParam::OptSleep2), array($newVal ? 1 : 0, $newVal ? 1 : 0));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
+    public function setOptEco(bool $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::OptEco), array($newVal ? 1 : 0));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
+    public function setOptAir(bool $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::OptAir), array($newVal ? 1 : 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
 
