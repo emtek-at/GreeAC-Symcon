@@ -102,7 +102,7 @@ class sinclair extends IPSModule {
             IPS_SetVariableProfileAssociation('deviceSwinger', 10, 'Swing Top -> MiddleBottom', '', -1);
             IPS_SetVariableProfileAssociation('deviceSwinger', 11, 'Swing Top -> Middle', '', -1);
 
-            IPS_SetVariableProfileValues('setTemp', 17, 28, 1);
+            IPS_SetVariableProfileValues('setTemp', 17, 27, 1);
             IPS_SetVariableProfileText('setTemp', '', '°C');
 
             IPS_SetVariableProfileText('actTemp', '', '°C');
@@ -267,7 +267,7 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::status, $this->getRequest($pack, false));
     }
 
-    public function setOptLight(boolean $newVal){
+    public function setOptLight(bool $newVal){
         $cmd = $this->getCommand(array(DeviceParam::OptLight), array($newVal ? 1 : 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
