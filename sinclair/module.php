@@ -185,6 +185,9 @@ class sinclair extends IPSModule {
         if(GetValueInteger($this->GetIDForIdent('actualCommand')) != Commands::none)
             return false;
 
+        $ap = $this->HasActiveParent();
+        $this->SendDebug('PA', $ap);
+
         SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
 
         // starte timer und resete actual command
