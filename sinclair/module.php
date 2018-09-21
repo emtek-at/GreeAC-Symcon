@@ -68,6 +68,8 @@ class sinclair extends IPSModule {
             IPS_CreateVariableProfile('deviceMode', 1);
             IPS_CreateVariableProfile('deviceFan', 1);
             IPS_CreateVariableProfile('deviceSwinger', 1);
+            IPS_CreateVariableProfile('setTemp', 1);
+            IPS_CreateVariableProfile('actTemp', 1);
 
             IPS_SetVariableProfileAssociation('deviceMode', 0, 'Auto', '', -1);
             IPS_SetVariableProfileAssociation('deviceMode', 1, 'Kühlen', '', -1);
@@ -95,13 +97,18 @@ class sinclair extends IPSModule {
             IPS_SetVariableProfileAssociation('deviceSwinger', 10, 'Swing Top -> MiddleBottom', '', -1);
             IPS_SetVariableProfileAssociation('deviceSwinger', 11, 'Swing Top -> Middle', '', -1);
 
+            IPS_SetVariableProfileValues('setTemp', 17, 27, 1);
+            IPS_SetVariableProfileText('setTemp', '', '°C');
+
+            IPS_SetVariableProfileText('actTemp', '', '°C');
+
             $this->RegisterVariableString("name", $this->Translate("varName"), '', 1);
             $this->RegisterVariableBoolean("power", $this->Translate("varPower"), '', 2);
             $this->RegisterVariableInteger("mode", $this->Translate("varMode"), 'deviceMode', 3);
             $this->RegisterVariableInteger("fan", $this->Translate("varFan"), 'deviceFan', 4);
             $this->RegisterVariableInteger("swinger", $this->Translate("varSwinger"), 'deviceSwinger', 5);
-            $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), '~Temperature', 6);
-            $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), '~Temperature', 7);
+            $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), 'setTemp', 6);
+            $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), 'actTemp', 7);
             $this->RegisterVariableBoolean("optDry", $this->Translate("varOptDry"), '', 8);
             $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '', 9);
             $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"), '', 10);
