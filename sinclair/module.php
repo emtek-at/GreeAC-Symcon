@@ -147,12 +147,8 @@ class sinclair extends IPSModule {
             $statusInterval = $this->ReadPropertyInteger("statusTimer");
             $this->debug('Update Status Interval', $statusInterval.' sec');
 
-            //$this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
+            $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
             SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
-
-            //$this->deviceScan();
-            $ap = $this->HasActiveParent();
-            $this->debug('PA', $ap);
 
             $this->SetStatus(102);
         }
@@ -240,8 +236,6 @@ class sinclair extends IPSModule {
                 SetValueString($this->GetIDForIdent('deviceKey'), $decObj->key);
 
                 $this->debug('AC DeviceKey', $decObj->key);
-
-                echo "ok";
                 break;
             case Commands::status:
                 $this->parseStatus($decObj->cols, $decObj->dat);
