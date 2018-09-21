@@ -47,6 +47,7 @@ class sinclair extends IPSModule {
         $this->RegisterPropertyInteger("statusTimer", 60);
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'SAW_getStatus($_IPS[\'TARGET\']);');
+        $this->RegisterTimer("resetCmdTimer", 0, 'SAW_resetCmd($_IPS[\'TARGET\']);');
 
 
         $this->RequireParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
@@ -137,7 +138,6 @@ class sinclair extends IPSModule {
             $this->EnableAction("optEco");
             $this->EnableAction("optAir");
 
-
             IPS_SetHidden($this->GetIDForIdent('deviceKey'), true);
             IPS_SetHidden($this->GetIDForIdent('actualCommand'), true);
 
@@ -213,20 +213,17 @@ class sinclair extends IPSModule {
 
     public function ReceiveData($JSONString){
         $actCmd = GetValueInteger($this->GetIDForIdent('actualCommand'));
-        SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
+        $this->resetCmd();
 
         $this->debug('ReceiveData', $JSONString);
 
         $recObj = json_decode($JSONString);
         $bufferObj = json_decode($recObj->Buffer);
-
         $key = $actCmd < Commands::status ? self::defaultCryptKey : GetValueString($this->GetIDForIdent('deviceKey'));
-
         $decrypted = $this->decrpyt($bufferObj->pack, $key);
         $decObj = json_decode($decrypted);
 
         $this->debug('Pack decrypted', $decrypted);
-
 
         switch($actCmd){
             case Commands::scan:
@@ -256,28 +253,45 @@ class sinclair extends IPSModule {
     }
 
     private function sendCommand($type, $cmdArr){
-        if(GetValueInteger($this->GetIDForIdent('actualCommand')) != Commands::none)
-            return false;
+        $counter = 0;
+        while(GetValueInteger($this->GetIDForIdent('actualCommand')) != Commands::none){
+            $counter++;
 
-        $ap = $this->HasActiveParent();
-        $this->debug('PA', $ap);
+            if($counter >= 3)
+                throw new Exception("there is another command pending");
+
+            IPS_Sleep(200);
+        }
+
+        $counter = 0;
+        while(!$this->HasActiveParent()){
+            $counter++;
+
+            if($counter >= 3)
+                throw new Exception("socket is not active");
+
+            IPS_Sleep(200);
+        }
 
         SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
 
-        // starte timer und resete actual command
+        $this->SetTimerInterval('resetCmdTimer', 500);
         $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
 
         return true;
     }
 
 
+    public function resetCmd(){
+        $this->SetTimerInterval('resetCmdTimer', 0);
+        SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
+    }
 
-
-    public function deviceScan(){
+    public function initDevice(){
         $arr = array('t' => 'scan');
         $this->sendCommand(Commands::scan, $arr);
     }
-    public function deviceBind(){
+    private function deviceBind(){
         $mac = GetValueString($this->GetIDForIdent('macAddress'));
         $mac = strtolower(str_replace(':', '', $mac));
         $pack = array(
