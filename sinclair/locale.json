@@ -8,6 +8,8 @@
       "varDeviceKey": "DeviceKey",
       "varPower": "eingeschalten",
       "varMode": "Modus",
+      "varFan": "Fanspeed",
+      "varSwinger": "Swinger",
       "varLastUpdate": "letzte Aktualisierung",
       "varMacAddress": "MAC",
       "varName": "Name",

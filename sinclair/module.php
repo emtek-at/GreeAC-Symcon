@@ -66,6 +66,8 @@ class sinclair extends IPSModule {
 
 
             IPS_CreateVariableProfile('deviceMode', 1);
+            IPS_CreateVariableProfile('deviceFan', 1);
+            IPS_CreateVariableProfile('deviceSwinger', 1);
 
             IPS_SetVariableProfileAssociation('deviceMode', 0, 'Auto', '', -1);
             IPS_SetVariableProfileAssociation('deviceMode', 1, 'Kühlen', '', -1);
@@ -73,12 +75,31 @@ class sinclair extends IPSModule {
             IPS_SetVariableProfileAssociation('deviceMode', 3, 'Trocknen', '', -1);
             IPS_SetVariableProfileAssociation('deviceMode', 4, 'Heizen', '', -1);
 
+            IPS_SetVariableProfileAssociation('deviceFan', 0, 'Auto', '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 1, 'Low', '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 2, 'MediumLow', '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 3, 'Medium', '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 4, 'MediumHigh', '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 5, 'High', '', -1);
+
+            IPS_SetVariableProfileAssociation('deviceSwinger', 0, 'Stop', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 1, 'Swing Top -> Bottom', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 2, 'Fixed Top', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 3, 'Fixed MiddleTop', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 4, 'Fixed Middle', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 5, 'Fixed MiddleBottom', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 6, 'Fixed Bottom', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 7, 'Swing Middle -> Bottom', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 8, 'Swing MiddleTop -> Bottom', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 9, 'Swing MiddleTop -> MiddleBottom', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 10, 'Swing Top -> MiddleBottom', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 11, 'Swing Top -> Middle', '', -1);
+
             $this->RegisterVariableString("name", $this->Translate("varName"), '', 1);
             $this->RegisterVariableBoolean("power", $this->Translate("varPower"), '', 2);
-            $this->RegisterVariableInteger("mode", $this->Translate("varMode"), 'deviceMode', 6);
-            //mode
-            //fan
-            //swinger
+            $this->RegisterVariableInteger("mode", $this->Translate("varMode"), 'deviceMode', 3);
+            $this->RegisterVariableInteger("fan", $this->Translate("varFan"), 'deviceFan', 4);
+            $this->RegisterVariableInteger("swinger", $this->Translate("varSwinger"), 'deviceSwinger', 5);
             $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), '~Temperature', 6);
             $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), '~Temperature', 7);
             $this->RegisterVariableBoolean("optDry", $this->Translate("varOptDry"), '', 8);
@@ -94,6 +115,9 @@ class sinclair extends IPSModule {
 
 
             $this->EnableAction("power");
+            $this->EnableAction("mode");
+            $this->EnableAction("fan");
+            $this->EnableAction("swinger");
             $this->EnableAction("setTemp");
             $this->EnableAction("optDry");
             $this->EnableAction("optHealth");
@@ -101,6 +125,7 @@ class sinclair extends IPSModule {
             $this->EnableAction("optSleep");
             $this->EnableAction("optEco");
             $this->EnableAction("optAir");
+
 
             IPS_SetHidden($this->GetIDForIdent('deviceKey'), true);
             IPS_SetHidden($this->GetIDForIdent('actualCommand'), true);
@@ -245,12 +270,12 @@ class sinclair extends IPSModule {
                 case DeviceParam::Mode:
                     SetValueInteger($this->GetIDForIdent('mode'), $dats[$i]);
                     break;
-                /*case DeviceParam::Fanspeed:
-                    SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
+                case DeviceParam::Fanspeed:
+                    SetValueInteger($this->GetIDForIdent('fan'), $dats[$i]);
                     break;
                 case DeviceParam::Swinger:
-                    SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
-                    break;*/
+                    SetValueInteger($this->GetIDForIdent('swinger'), $dats[$i]);
+                    break;
                 case DeviceParam::SetTemperature:
                     SetValueInteger($this->GetIDForIdent('setTemp'), $dats[$i]);
                     break;
