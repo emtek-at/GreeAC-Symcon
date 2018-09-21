@@ -64,13 +64,23 @@ class sinclair extends IPSModule {
             //Instanz ist aktiv
             //$this->SetStatus(101);
 
+
+            IPS_CreateVariableProfile('deviceMode', 1);
+
+            IPS_SetVariableProfileAssociation('deviceMode', 0, 'Auto', '', -1);
+            IPS_SetVariableProfileAssociation('deviceMode', 1, 'Kühlen', '', -1);
+            IPS_SetVariableProfileAssociation('deviceMode', 2, 'Lüften', '', -1);
+            IPS_SetVariableProfileAssociation('deviceMode', 3, 'Trocknen', '', -1);
+            IPS_SetVariableProfileAssociation('deviceMode', 4, 'Heizen', '', -1);
+
             $this->RegisterVariableString("name", $this->Translate("varName"), '', 1);
             $this->RegisterVariableBoolean("power", $this->Translate("varPower"), '', 2);
+            $this->RegisterVariableInteger("mode", $this->Translate("varMode"), 'deviceMode', 6);
             //mode
             //fan
             //swinger
-            $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), '', 6);
-            $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), '', 7);
+            $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), '~Temperature', 6);
+            $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), '~Temperature', 7);
             $this->RegisterVariableBoolean("optDry", $this->Translate("varOptDry"), '', 8);
             $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '', 9);
             $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"), '', 10);
@@ -220,7 +230,7 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::status, $this->getRequest($pack, false));
     }
 
-    public function setOptLight(bool $newVal){
+    public function setOptLight(boolean $newVal){
         $cmd = $this->getCommand(array(DeviceParam::OptLight), array($newVal ? 1 : 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
@@ -232,10 +242,10 @@ class sinclair extends IPSModule {
                 case DeviceParam::Power:
                     SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
                     break;
-                /*case DeviceParam::Mode:
-                    SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
+                case DeviceParam::Mode:
+                    SetValueInteger($this->GetIDForIdent('mode'), $dats[$i]);
                     break;
-                case DeviceParam::Fanspeed:
+                /*case DeviceParam::Fanspeed:
                     SetValueBoolean($this->GetIDForIdent('power'), $dats[$i]!=0 ? true : false);
                     break;
                 case DeviceParam::Swinger:

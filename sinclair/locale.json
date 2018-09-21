@@ -7,6 +7,7 @@
       "varActualCommand": "cmd",
       "varDeviceKey": "DeviceKey",
       "varPower": "eingeschalten",
+      "varMode": "Modus",
       "varLastUpdate": "letzte Aktualisierung",
       "varMacAddress": "MAC",
       "varName": "Name",
