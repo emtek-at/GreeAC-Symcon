@@ -65,11 +65,16 @@ class sinclair extends IPSModule {
             //$this->SetStatus(101);
 
 
-            IPS_CreateVariableProfile('deviceMode', 1);
-            IPS_CreateVariableProfile('deviceFan', 1);
-            IPS_CreateVariableProfile('deviceSwinger', 1);
-            IPS_CreateVariableProfile('setTemp', 1);
-            IPS_CreateVariableProfile('actTemp', 1);
+            if(!IPS_VariableProfileExists('deviceMode'))
+                IPS_CreateVariableProfile('deviceMode', 1);
+            if(!IPS_VariableProfileExists('deviceFan'))
+                IPS_CreateVariableProfile('deviceFan', 1);
+            if(!IPS_VariableProfileExists('deviceSwinger'))
+                IPS_CreateVariableProfile('deviceSwinger', 1);
+            if(!IPS_VariableProfileExists('setTemp'))
+                IPS_CreateVariableProfile('setTemp', 1);
+            if(!IPS_VariableProfileExists('actTemp'))
+                IPS_CreateVariableProfile('actTemp', 1);
 
             IPS_SetVariableProfileAssociation('deviceMode', 0, 'Auto', '', -1);
             IPS_SetVariableProfileAssociation('deviceMode', 1, 'Kühlen', '', -1);
@@ -97,7 +102,7 @@ class sinclair extends IPSModule {
             IPS_SetVariableProfileAssociation('deviceSwinger', 10, 'Swing Top -> MiddleBottom', '', -1);
             IPS_SetVariableProfileAssociation('deviceSwinger', 11, 'Swing Top -> Middle', '', -1);
 
-            IPS_SetVariableProfileValues('setTemp', 17, 27, 1);
+            IPS_SetVariableProfileValues('setTemp', 17, 28, 1);
             IPS_SetVariableProfileText('setTemp', '', '°C');
 
             IPS_SetVariableProfileText('actTemp', '', '°C');
