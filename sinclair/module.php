@@ -230,7 +230,7 @@ class sinclair extends IPSModule {
 
         switch($actCmd){
             case Commands::scan:
-                $mac = implode(':', str_split($decObj->mac, 2));
+                $mac = strtoupper(implode(':', str_split($decObj->mac, 2)));
                 SetValueString($this->GetIDForIdent('macAddress'), $mac);
                 SetValueString($this->GetIDForIdent('name'), $decObj->name);
 
@@ -278,10 +278,12 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::scan, $arr);
     }
     public function deviceBind(){
+        $mac = GetValueString($this->GetIDForIdent('macAddress'));
+        $mac = strtolower(str_replace(':', '', $mac));
         $pack = array(
             't' => 'bind',
             'uid' => 0,
-            'mac' => GetValueString($this->GetIDForIdent('macAddress'))
+            'mac' => $mac
         );
         $this->sendCommand(Commands::bind, $this->getRequest($pack, true));
     }
