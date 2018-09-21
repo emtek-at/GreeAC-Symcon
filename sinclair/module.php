@@ -188,16 +188,6 @@ class sinclair extends IPSModule {
     }
 
 
-    public function test() {
-        // Selbsterstellter Code
-        $arr = array('t' => 'scan');
-        //$r = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($arr))));
-        //$this->SendDebug('sdp return', $r, 0);
-
-        $this->sendCommand(Commands::scan, $arr);
-    }
-
-
 
 
     public function deviceScan(){
@@ -219,6 +209,11 @@ class sinclair extends IPSModule {
             'cols' => array(DeviceParam::Power, DeviceParam::Mode, DeviceParam::SetTemperature, DeviceParam::ActTemperature, DeviceParam::Fanspeed, DeviceParam::Swinger, DeviceParam::OptAir, DeviceParam::OptDry, DeviceParam::OptEco, DeviceParam::OptHealth, DeviceParam::OptLight, DeviceParam::OptSleep1)
         );
         $this->sendCommand(Commands::status, $this->getRequest($pack, false));
+    }
+
+    public function setOptLight($newVal){
+        $cmd = $this->getCommand(array(DeviceParam::OptLight), array($newVal ? 1 : 0));
+        $this->sendCommand(Commands::bind, $this->getRequest($cmd, false));
     }
 
 
@@ -279,6 +274,21 @@ class sinclair extends IPSModule {
         );
 
         return $arr;
+    }
+    private function getCommand($opts, $vals){
+        /*
+        requestPackCommand reqCmd = new requestPackCommand();
+            reqCmd.opt = opt;
+            reqCmd.p = values;
+            reqCmd.t = "cmd";
+        */
+        $cmd = array(
+            't' => 'cmd',
+            'opt' => $opts,
+            'p' => $vals
+        );
+
+        return $cmd;
     }
 
     private function decrpyt( $message, $key ){
