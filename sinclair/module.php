@@ -28,9 +28,8 @@ abstract class DeviceParam
 
 // Klassendefinition
 class sinclair extends IPSModule {
-
+    const debug = true;
     const defaultCryptKey = 'a3K8Bx%2r8Y7#xDh';
-    private $deviceKey = '';
 
 
     // Der Konstruktor des Moduls
@@ -38,10 +37,6 @@ class sinclair extends IPSModule {
     public function __construct($InstanceID) {
         // Diese Zeile nicht löschen
         parent::__construct($InstanceID);
-
-        // Selbsterstellter Code
-        //UDP Socket = {82347F20-F541-41E1-AC5B-A636FD3AE2D8}
-        //$this->ConnectParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
     }
 
     // Überschreibt die interne IPS_Create($id) Funktion
@@ -88,10 +83,17 @@ class sinclair extends IPSModule {
             $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"), '', 17);
 
 
+            $this->EnableAction("power");
             $this->EnableAction("setTemp");
             $this->EnableAction("optDry");
+            $this->EnableAction("optHealth");
+            $this->EnableAction("optLight");
+            $this->EnableAction("optSleep");
+            $this->EnableAction("optEco");
+            $this->EnableAction("optAir");
 
-
+            IPS_SetHidden($this->GetIDForIdent('deviceKey'), true);
+            IPS_SetHidden($this->GetIDForIdent('actualCommand'), true);
 
 
             $this->SendDebug('host', $host, 0);
@@ -102,7 +104,9 @@ class sinclair extends IPSModule {
             //$this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
             SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
 
-            $this->deviceScan();
+            //$this->deviceScan();
+            $ap = $this->HasActiveParent();
+            $this->SendDebug('PA', $ap);
 
             $this->SetStatus(102);
         }
@@ -120,15 +124,13 @@ class sinclair extends IPSModule {
     }
 
     public function RequestAction($Ident, $Value) {
-        //$this->deviceGetStatus();
-        //$this->SendDebug('RequestAction', 'ja', 0);
         $this->SendDebug('RequestAction', $Ident.': '.$Value, 0);
         switch($Ident) {
             case "setTemp":
                 $this->deviceGetStatus();
-
-                //Neuen Wert in die Statusvariable schreiben
-                //SetValue($this->GetIDForIdent($Ident), $Value);
+                break;
+            case 'optLight':
+                $this->setOptLight($Value);
                 break;
             default:
                 throw new Exception("Invalid ident");
@@ -172,6 +174,9 @@ class sinclair extends IPSModule {
                 $this->parseStatus($decObj->cols, $decObj->dat);
 
                 SetValueString($this->GetIDForIdent('lastUpdate'), date("Y-m-d H:i:s"));
+                break;
+            case Commands::cmd:
+                $this->parseStatus($decObj->opt, $decObj->p);
                 break;
         }
     }
@@ -280,12 +285,6 @@ class sinclair extends IPSModule {
         return $arr;
     }
     private function getCommand($opts, $vals){
-        /*
-        requestPackCommand reqCmd = new requestPackCommand();
-            reqCmd.opt = opt;
-            reqCmd.p = values;
-            reqCmd.t = "cmd";
-        */
         $cmd = array(
             't' => 'cmd',
             'opt' => $opts,
@@ -341,6 +340,65 @@ class sinclair extends IPSModule {
                 OPENSSL_RAW_DATA | OPENSSL_ZERO_PADDING
             )
         );
+    }
+
+    private function debug($name, $data){
+        if(self::debug)
+            $this->SendDebug($name, $data, 0);
+    }
+
+
+    /**
+     * Check if a parent is active
+     * @param $id integer InstanceID
+     * @return bool
+     */
+    protected function HasActiveParent($id = 0)
+    {
+        if ($id == 0) $id = $this->InstanceID;
+        $parent = $this->GetParent($id);
+        if ($parent > 0) {
+            $status = $this->GetInstanceStatus($parent);
+            if ($status == 102) {
+                return true;
+            } else {
+                //IPS_SetInstanceStatus($id, self::ST_NOPARENT);
+                $this->debug(__FUNCTION__, "Parent not active for Instance #" . $id);
+                return false;
+            }
+        }
+        $this->debug(__FUNCTION__, "No Parent for Instance #" . $id);
+        return false;
+    }
+    //------------------------------------------------------------------------------
+    /**
+     * Check if a parent for Instance $id exists
+     * @param $id integer InstanceID
+     * @return integer
+     */
+    protected function GetParent($id = 0)
+    {
+        $parent = 0;
+        if ($id == 0) $id = $this->InstanceID;
+        if (IPS_InstanceExists($id)) {
+            $instance = IPS_GetInstance($id);
+            $parent = $instance['ConnectionID'];
+        } else {
+            $this->debug(__FUNCTION__, "Instance #$id doesn't exists");
+        }
+        return $parent;
+    }
+//------------------------------------------------------------------------------
+    /**
+     * Retrieve instance status
+     * @param int $id
+     * @return mixed
+     */
+    protected function GetInstanceStatus($id = 0)
+    {
+        if ($id == 0) $id = $this->InstanceID;
+        $inst = IPS_GetInstance($id);
+        return $inst['InstanceStatus'];
     }
 }
 ?>
