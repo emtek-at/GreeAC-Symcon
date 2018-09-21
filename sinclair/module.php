@@ -297,7 +297,7 @@ class sinclair extends IPSModule {
         );
         $this->sendCommand(Commands::bind, $this->getRequest($pack, true));
     }
-    public function deviceGetStatus(){
+    public function getStatus(){
         $pack = array(
             't' => 'status',
             'mac' => GetValueString($this->GetIDForIdent('macAddress')),
