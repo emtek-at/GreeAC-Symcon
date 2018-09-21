@@ -76,31 +76,31 @@ class sinclair extends IPSModule {
             if(!IPS_VariableProfileExists('actTemp'))
                 IPS_CreateVariableProfile('actTemp', 1);
 
-            IPS_SetVariableProfileAssociation('deviceMode', 0, 'Auto', '', -1);
-            IPS_SetVariableProfileAssociation('deviceMode', 1, 'Kühlen', '', -1);
-            IPS_SetVariableProfileAssociation('deviceMode', 2, 'Lüften', '', -1);
-            IPS_SetVariableProfileAssociation('deviceMode', 3, 'Trocknen', '', -1);
-            IPS_SetVariableProfileAssociation('deviceMode', 4, 'Heizen', '', -1);
+            IPS_SetVariableProfileAssociation('deviceMode', 0, $this->Translate("paDeviceMode-0"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceMode', 1, $this->Translate("paDeviceMode-1"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceMode', 2, $this->Translate("paDeviceMode-2"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceMode', 3, $this->Translate("paDeviceMode-3"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceMode', 4, $this->Translate("paDeviceMode-4"), '', -1);
 
-            IPS_SetVariableProfileAssociation('deviceFan', 0, 'Auto', '', -1);
-            IPS_SetVariableProfileAssociation('deviceFan', 1, 'Low', '', -1);
-            IPS_SetVariableProfileAssociation('deviceFan', 2, 'MediumLow', '', -1);
-            IPS_SetVariableProfileAssociation('deviceFan', 3, 'Medium', '', -1);
-            IPS_SetVariableProfileAssociation('deviceFan', 4, 'MediumHigh', '', -1);
-            IPS_SetVariableProfileAssociation('deviceFan', 5, 'High', '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 0, $this->Translate("paDeviceFan-0"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 1, $this->Translate("paDeviceFan-1"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 2, $this->Translate("paDeviceFan-2"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 3, $this->Translate("paDeviceFan-3"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 4, $this->Translate("paDeviceFan-4"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceFan', 5, $this->Translate("paDeviceFan-5"), '', -1);
 
-            IPS_SetVariableProfileAssociation('deviceSwinger', 0, 'Stop', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 1, 'Swing Top -> Bottom', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 2, 'Fixed Top', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 3, 'Fixed MiddleTop', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 4, 'Fixed Middle', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 5, 'Fixed MiddleBottom', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 6, 'Fixed Bottom', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 7, 'Swing Middle -> Bottom', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 8, 'Swing MiddleTop -> Bottom', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 9, 'Swing MiddleTop -> MiddleBottom', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 10, 'Swing Top -> MiddleBottom', '', -1);
-            IPS_SetVariableProfileAssociation('deviceSwinger', 11, 'Swing Top -> Middle', '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 0, $this->Translate("paDeviceSwinger-0"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 1, $this->Translate("paDeviceSwinger-1"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 2, $this->Translate("paDeviceSwinger-2"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 3, $this->Translate("paDeviceSwinger-3"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 4, $this->Translate("paDeviceSwinger-4"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 5, $this->Translate("paDeviceSwinger-5"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 6, $this->Translate("paDeviceSwinger-6"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 7, $this->Translate("paDeviceSwinger-7"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 8, $this->Translate("paDeviceSwinger-8"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 9, $this->Translate("paDeviceSwinger-9"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 10, $this->Translate("paDeviceSwinger-10"), '', -1);
+            IPS_SetVariableProfileAssociation('deviceSwinger', 11, $this->Translate("paDeviceSwinger-11"), '', -1);
 
             IPS_SetVariableProfileValues('setTemp', 17, 27, 1);
             IPS_SetVariableProfileText('setTemp', '', '°C');
