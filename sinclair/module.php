@@ -240,6 +240,8 @@ class sinclair extends IPSModule {
                 SetValueString($this->GetIDForIdent('deviceKey'), $decObj->key);
 
                 $this->debug('AC DeviceKey', $decObj->key);
+
+                echo "ok";
                 break;
             case Commands::status:
                 $this->parseStatus($decObj->cols, $decObj->dat);
