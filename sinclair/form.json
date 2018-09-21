@@ -6,6 +6,8 @@
   ],
   "actions":
   [
+    { "type": "Label", "label": "Init Device" },
+    { "type": "Button", "label": "Setup Notification", "onClick": "Sinclair_initDevice($id);" }
   ],
   "status":
   [

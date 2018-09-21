@@ -46,8 +46,8 @@ class sinclair extends IPSModule {
         $this->RegisterPropertyString("host", "");
         $this->RegisterPropertyInteger("statusTimer", 60);
 
-        $this->RegisterTimer("status_UpdateTimer", 0, 'SAW_getStatus($_IPS[\'TARGET\']);');
-        $this->RegisterTimer("resetCmdTimer", 0, 'SAW_resetCmd($_IPS[\'TARGET\']);');
+        $this->RegisterTimer("status_UpdateTimer", 0, 'Sinclair_getStatus($_IPS[\'TARGET\']);');
+        $this->RegisterTimer("resetCmdTimer", 0, 'Sinclair_resetCmd($_IPS[\'TARGET\']);');
 
 
         $this->RequireParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
