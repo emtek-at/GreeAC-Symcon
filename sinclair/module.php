@@ -182,13 +182,11 @@ class sinclair extends IPSModule {
 
         SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
 
-        $ret = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
         // starte timer und resete actual command
+        $ret = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
 
-        if($ret)
-            $this->SendDebug('SendDataToParent', 'ok', 0);
-        else
-            $this->SendDebug('SendDataToParent', 'nok', 0);
+        $r = print_r($ret, true);
+        $this->SendDebug('SendDataToParent', $r, 0);
 
         return true;
     }
