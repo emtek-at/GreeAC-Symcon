@@ -5,6 +5,7 @@ abstract class Commands
     const scan = 0;
     const bind = 1;
     const status = 2;
+    const cmd = 3;
     // etc.
 }
 
@@ -181,8 +182,13 @@ class sinclair extends IPSModule {
 
         SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
 
-        $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
+        $ret = $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
         // starte timer und resete actual command
+
+        if($ret)
+            $this->SendDebug('SendDataToParent', 'ok', 0);
+        else
+            $this->SendDebug('SendDataToParent', 'nok', 0);
 
         return true;
     }
@@ -213,7 +219,7 @@ class sinclair extends IPSModule {
 
     public function setOptLight($newVal){
         $cmd = $this->getCommand(array(DeviceParam::OptLight), array($newVal ? 1 : 0));
-        $this->sendCommand(Commands::bind, $this->getRequest($cmd, false));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
 
 
