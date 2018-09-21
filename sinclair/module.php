@@ -106,7 +106,7 @@ class sinclair extends IPSModule {
 
             //$this->deviceScan();
             $ap = $this->HasActiveParent();
-            $this->SendDebug('PA', $ap);
+            $this->SendDebug('PA', $ap, 0);
 
             $this->SetStatus(102);
         }
@@ -186,7 +186,7 @@ class sinclair extends IPSModule {
             return false;
 
         $ap = $this->HasActiveParent();
-        $this->SendDebug('PA', $ap);
+        $this->SendDebug('PA', $ap, 0);
 
         SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
 
