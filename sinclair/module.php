@@ -125,10 +125,7 @@ class sinclair extends IPSModule {
             $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"), '', 16);
             $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"), '', 17);
 
-            //IPS_SetIcon($this->GetIDForIdent('name'), '');
             IPS_SetIcon($this->GetIDForIdent('power'), 'Power');
-            //IPS_SetIcon($this->GetIDForIdent('mode'), 'Climate');
-            //IPS_SetIcon($this->GetIDForIdent('fan'), 'Ventilation');
             IPS_SetIcon($this->GetIDForIdent('swinger'), 'WindSpeed');
             IPS_SetIcon($this->GetIDForIdent('setTemp'), 'Temperature');
             IPS_SetIcon($this->GetIDForIdent('actTemp'), 'Temperature');
@@ -137,10 +134,9 @@ class sinclair extends IPSModule {
             IPS_SetIcon($this->GetIDForIdent('optLight'), 'Light');
             IPS_SetIcon($this->GetIDForIdent('optSleep'), 'Moon');
             IPS_SetIcon($this->GetIDForIdent('optEco'), 'Leaf');
-            //IPS_SetIcon($this->GetIDForIdent('optAir'), '');
+            IPS_SetIcon($this->GetIDForIdent('optAir'), 'WindDirection');
             IPS_SetIcon($this->GetIDForIdent('lastUpdate'), 'Repeat');
             IPS_SetIcon($this->GetIDForIdent('macAddress'), 'Notebook');
-
 
             $this->EnableAction("power");
             $this->EnableAction("mode");
