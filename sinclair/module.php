@@ -110,9 +110,9 @@ class sinclair extends IPSModule {
             $this->RegisterVariableString("name", $this->Translate("varName"), '', 1);
             $this->RegisterVariableBoolean("power", $this->Translate("varPower"), '~Switch', 2);
             $this->RegisterVariableInteger("mode", $this->Translate("varMode"), 'Sinclair.DeviceMode', 3);
-            $this->RegisterVariableInteger("fan", $this->Translate("varFan"), 'Sinclair.DeviceFan', 4);
-            $this->RegisterVariableInteger("swinger", $this->Translate("varSwinger"), 'Sinclair.DeviceSwinger', 5);
-            $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), 'Sinclair.SetTemp', 6);
+            $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), 'Sinclair.SetTemp', 4);
+            $this->RegisterVariableInteger("fan", $this->Translate("varFan"), 'Sinclair.DeviceFan', 5);
+            $this->RegisterVariableInteger("swinger", $this->Translate("varSwinger"), 'Sinclair.DeviceSwinger', 6);
             $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), 'Sinclair.ActTemp', 7);
             $this->RegisterVariableBoolean("optDry", $this->Translate("varOptDry"), '~Switch', 8);
             $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '~Switch', 9);
@@ -129,7 +129,7 @@ class sinclair extends IPSModule {
             IPS_SetIcon($this->GetIDForIdent('power'), 'Power');
             //IPS_SetIcon($this->GetIDForIdent('mode'), 'Climate');
             //IPS_SetIcon($this->GetIDForIdent('fan'), 'Ventilation');
-            //IPS_SetIcon($this->GetIDForIdent('swinger'), '');
+            IPS_SetIcon($this->GetIDForIdent('swinger'), 'WindSpeed');
             IPS_SetIcon($this->GetIDForIdent('setTemp'), 'Temperature');
             IPS_SetIcon($this->GetIDForIdent('actTemp'), 'Temperature');
             IPS_SetIcon($this->GetIDForIdent('optDry'), 'Drops');
