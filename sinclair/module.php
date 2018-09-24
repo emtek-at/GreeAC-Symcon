@@ -220,10 +220,11 @@ class sinclair extends IPSModule {
     }
 
     public function ReceiveData($JSONString){
+        $this->debug('ReceiveData1', $JSONString);
         $actCmd = GetValueInteger($this->GetIDForIdent('actualCommand'));
         $this->resetCmd();
 
-        $this->debug('ReceiveData', $JSONString);
+        $this->debug('ReceiveData2', $JSONString);
 
         $recObj = json_decode($JSONString);
         $bufferObj = json_decode($recObj->Buffer);
