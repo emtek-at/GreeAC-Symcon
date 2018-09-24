@@ -261,7 +261,7 @@ class sinclair extends IPSModule {
     }
 
     private function sendCommand($type, $cmdArr){
-        $counter = 0;
+ /*       $counter = 0;
         while(GetValueInteger($this->GetIDForIdent('actualCommand')) != Commands::none){
             $counter++;
 
@@ -286,7 +286,7 @@ class sinclair extends IPSModule {
         }
 
         SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
-
+*/
         $this->SetTimerInterval('resetCmdTimer', 500);
         $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
 
