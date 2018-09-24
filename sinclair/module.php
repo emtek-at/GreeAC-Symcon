@@ -265,8 +265,10 @@ class sinclair extends IPSModule {
         while(GetValueInteger($this->GetIDForIdent('actualCommand')) != Commands::none){
             $counter++;
 
-            if($counter >= 3)
+            if($counter >= 3){
+                $this->debug('sendCommand', 'there is another command pending');
                 throw new Exception("there is another command pending");
+            }
 
             IPS_Sleep(200);
         }
@@ -275,8 +277,10 @@ class sinclair extends IPSModule {
         while(!$this->HasActiveParent()){
             $counter++;
 
-            if($counter >= 3)
+            if($counter >= 3){
+                $this->debug('sendCommand', 'socket is not active');
                 throw new Exception("socket is not active");
+            }
 
             IPS_Sleep(200);
         }
@@ -310,6 +314,7 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::bind, $this->getRequest($pack, true));
     }
     public function getStatus(){
+        //TODO wenn kein device key -> init
         $pack = array(
             't' => 'status',
             'mac' => GetValueString($this->GetIDForIdent('macAddress')),
@@ -320,6 +325,7 @@ class sinclair extends IPSModule {
 
 
     public function setPower(bool $newVal){
+        $this->debug('setPower', $newVal ? 'on' : 'off');
         $cmd = $this->getCommand(array(DeviceParam::Power, DeviceParam::OptSleep1, DeviceParam::OptSleep2, DeviceParam::OptAir), array($newVal ? 1 : 0, 0, 0, 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
@@ -348,6 +354,7 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
     public function setOptLight(bool $newVal){
+        $this->debug('setOptLight', $newVal ? 'on' : 'off');
         $cmd = $this->getCommand(array(DeviceParam::OptLight), array($newVal ? 1 : 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
