@@ -47,7 +47,6 @@ class sinclair extends IPSModule {
         $this->RegisterPropertyInteger("statusTimer", 60);
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'Sinclair_getStatus($_IPS[\'TARGET\']);');
-        $this->RegisterTimer("resetCmdTimer", 0, 'Sinclair_resetCmd($_IPS[\'TARGET\']);');
 
 
         $this->RequireParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
@@ -63,8 +62,6 @@ class sinclair extends IPSModule {
         {
             //Instanz ist aktiv
             //$this->SetStatus(101);
-
-
             if(!IPS_VariableProfileExists('Sinclair.DeviceMode'))
                 IPS_CreateVariableProfile('Sinclair.DeviceMode', 1);
             if(!IPS_VariableProfileExists('Sinclair.DeviceFan'))
@@ -220,11 +217,9 @@ class sinclair extends IPSModule {
     }
 
     public function ReceiveData($JSONString){
-        $this->debug('ReceiveData1', $JSONString);
+        $this->debug('ReceiveData', $JSONString);
         $actCmd = GetValueInteger($this->GetIDForIdent('actualCommand'));
         $this->resetCmd();
-
-        $this->debug('ReceiveData2', $JSONString);
 
         $recObj = json_decode($JSONString);
         $bufferObj = json_decode($recObj->Buffer);
@@ -288,16 +283,14 @@ class sinclair extends IPSModule {
 */
         SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
 
-        //$this->SetTimerInterval('resetCmdTimer', 500);
         $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
-        $this->debug('sendCommand', json_encode($cmdArr));
+        //$this->debug('sendCommand', json_encode($cmdArr));
 
         return true;
     }
 
 
     public function resetCmd(){
-        //$this->SetTimerInterval('resetCmdTimer', 0);
         SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
     }
 
