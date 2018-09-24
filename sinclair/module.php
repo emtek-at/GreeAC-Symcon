@@ -305,12 +305,10 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::scan, $arr);
     }
     private function deviceBind(){
-        $mac = GetValueString($this->GetIDForIdent('macAddress'));
-        $mac = strtolower(str_replace(':', '', $mac));
         $pack = array(
             't' => 'bind',
             'uid' => 0,
-            'mac' => $mac
+            'mac' => $this->getMacUnformatted()
         );
         $this->sendCommand(Commands::bind, $this->getRequest($pack, true));
     }
@@ -318,7 +316,7 @@ class sinclair extends IPSModule {
         //TODO wenn kein device key -> init
         $pack = array(
             't' => 'status',
-            'mac' => GetValueString($this->GetIDForIdent('macAddress')),
+            'mac' => $this->getMacUnformatted(),
             'cols' => array(DeviceParam::Power, DeviceParam::Mode, DeviceParam::SetTemperature, DeviceParam::ActTemperature, DeviceParam::Fanspeed, DeviceParam::Swinger, DeviceParam::OptAir, DeviceParam::OptDry, DeviceParam::OptEco, DeviceParam::OptHealth, DeviceParam::OptLight, DeviceParam::OptSleep1)
         );
         $this->sendCommand(Commands::status, $this->getRequest($pack, false));
@@ -425,7 +423,7 @@ class sinclair extends IPSModule {
             'i' => $bDefKey ? 1 : 0,
             'pack' => $this->encrypt(json_encode($pack), $key),
             't' => 'pack',
-            'tcid' => GetValueString($this->GetIDForIdent('macAddress')),
+            'tcid' => $this->getMacUnformatted(),
             'uid' => 22130
         );
 
@@ -439,6 +437,12 @@ class sinclair extends IPSModule {
         );
 
         return $cmd;
+    }
+    private function getMacUnformatted(){
+        $mac = GetValueString($this->GetIDForIdent('macAddress'));
+        $mac = strtolower(str_replace(':', '', $mac));
+
+        return $mac;
     }
 
     private function decrpyt( $message, $key ){
