@@ -284,9 +284,9 @@ class sinclair extends IPSModule {
 
             IPS_Sleep(200);
         }
-
-        SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
 */
+        SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
+
         $this->SetTimerInterval('resetCmdTimer', 500);
         $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
 
