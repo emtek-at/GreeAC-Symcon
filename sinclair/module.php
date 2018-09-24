@@ -288,7 +288,7 @@ class sinclair extends IPSModule {
 */
         SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
 
-        $this->SetTimerInterval('resetCmdTimer', 500);
+        //$this->SetTimerInterval('resetCmdTimer', 500);
         $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
         $this->debug('sendCommand', json_encode($cmdArr));
 
@@ -297,7 +297,7 @@ class sinclair extends IPSModule {
 
 
     public function resetCmd(){
-        $this->SetTimerInterval('resetCmdTimer', 0);
+        //$this->SetTimerInterval('resetCmdTimer', 0);
         SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
     }
 
