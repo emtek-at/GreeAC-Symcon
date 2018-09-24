@@ -318,7 +318,6 @@ class sinclair extends IPSModule {
 
 
     public function setPower(bool $newVal){
-        $this->debug('setPower', $newVal ? 'on' : 'off');
         $cmd = $this->getCommand(array(DeviceParam::Power, DeviceParam::OptSleep1, DeviceParam::OptSleep2, DeviceParam::OptAir), array($newVal ? 1 : 0, 0, 0, 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
@@ -347,7 +346,6 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
     public function setOptLight(bool $newVal){
-        $this->debug('setOptLight', $newVal ? 'on' : 'off');
         $cmd = $this->getCommand(array(DeviceParam::OptLight), array($newVal ? 1 : 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
