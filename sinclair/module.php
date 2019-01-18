@@ -75,8 +75,8 @@ class sinclair extends IPSModule {
 
             IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 0, $this->Translate("paDeviceMode-0"), 'Climate', -1);
             IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 1, $this->Translate("paDeviceMode-1"), 'Snowflake', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 2, $this->Translate("paDeviceMode-2"), 'Ventilation', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 3, $this->Translate("paDeviceMode-3"), 'Drops', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 2, $this->Translate("paDeviceMode-2"), 'Drops', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 3, $this->Translate("paDeviceMode-3"), 'Ventilation', -1);
             IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 4, $this->Translate("paDeviceMode-4"), 'Flame', -1);
 
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
