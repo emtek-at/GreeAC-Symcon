@@ -259,42 +259,15 @@ class sinclair extends IPSModule {
     }
 
     private function sendCommand($type, $cmdArr){
- /*       $counter = 0;
-        while(GetValueInteger($this->GetIDForIdent('actualCommand')) != Commands::none){
-            $counter++;
-
-            if($counter >= 3){
-                $this->debug('sendCommand', 'there is another command pending');
-                throw new Exception("there is another command pending");
-            }
-
-            IPS_Sleep(200);
-        }
-
-        $counter = 0;
-        while(!$this->HasActiveParent()){
-            $counter++;
-
-            if($counter >= 3){
-                $this->debug('sendCommand', 'socket is not active');
-                throw new Exception("socket is not active");
-            }
-
-            IPS_Sleep(200);
-        }
-*/
-        //SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
         $this->SetBuffer('actualCommand', $type);
 
         $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
-        //$this->debug('sendCommand', json_encode($cmdArr));
 
         return true;
     }
 
 
     public function resetCmd(){
-        //SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
         $this->SetBuffer('actualCommand', Commands::none);
     }
 
