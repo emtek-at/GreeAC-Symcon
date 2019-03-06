@@ -1,11 +1,11 @@
 <?
 abstract class Commands
 {
-    const none = -1;
-    const scan = 0;
-    const bind = 1;
-    const status = 2;
-    const cmd = 3;
+    const none = '-1';
+    const scan = '0';
+    const bind = '1';
+    const status = '2';
+    const cmd = '3';
 }
 
 abstract class DeviceParam
@@ -75,8 +75,8 @@ class sinclair extends IPSModule {
 
             IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 0, $this->Translate("paDeviceMode-0"), 'Climate', -1);
             IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 1, $this->Translate("paDeviceMode-1"), 'Snowflake', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 2, $this->Translate("paDeviceMode-2"), 'Ventilation', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 3, $this->Translate("paDeviceMode-3"), 'Drops', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 2, $this->Translate("paDeviceMode-2"), 'Drops', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 3, $this->Translate("paDeviceMode-3"), 'Ventilation', -1);
             IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 4, $this->Translate("paDeviceMode-4"), 'Flame', -1);
 
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
@@ -120,7 +120,7 @@ class sinclair extends IPSModule {
             $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"), '', 14);
             $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"), '', 15);
             $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"), '', 16);
-            $this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"), '', 17);
+            //$this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"), '', 17);
 
             IPS_SetIcon($this->GetIDForIdent('power'), 'Power');
             IPS_SetIcon($this->GetIDForIdent('swinger'), 'WindSpeed');
@@ -148,7 +148,7 @@ class sinclair extends IPSModule {
             $this->EnableAction("optAir");
 
             IPS_SetHidden($this->GetIDForIdent('deviceKey'), true);
-            IPS_SetHidden($this->GetIDForIdent('actualCommand'), true);
+            //IPS_SetHidden($this->GetIDForIdent('actualCommand'), true);
 
 
             $this->debug('host', $host);
@@ -157,7 +157,8 @@ class sinclair extends IPSModule {
             $this->debug('Update Status Interval', $statusInterval.' sec');
 
             $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
-            SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
+            //SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
+            $this->SetBuffer("actualCommand", Commands::none);
 
             $this->SetStatus(102);
         }
@@ -218,7 +219,8 @@ class sinclair extends IPSModule {
 
     public function ReceiveData($JSONString){
         $this->debug('ReceiveData', $JSONString);
-        $actCmd = GetValueInteger($this->GetIDForIdent('actualCommand'));
+        //$actCmd = GetValueInteger($this->GetIDForIdent('actualCommand'));
+        $actCmd = $this->GetBuffer('actualCommand');
         $this->resetCmd();
 
         $recObj = json_decode($JSONString);
@@ -257,41 +259,16 @@ class sinclair extends IPSModule {
     }
 
     private function sendCommand($type, $cmdArr){
- /*       $counter = 0;
-        while(GetValueInteger($this->GetIDForIdent('actualCommand')) != Commands::none){
-            $counter++;
-
-            if($counter >= 3){
-                $this->debug('sendCommand', 'there is another command pending');
-                throw new Exception("there is another command pending");
-            }
-
-            IPS_Sleep(200);
-        }
-
-        $counter = 0;
-        while(!$this->HasActiveParent()){
-            $counter++;
-
-            if($counter >= 3){
-                $this->debug('sendCommand', 'socket is not active');
-                throw new Exception("socket is not active");
-            }
-
-            IPS_Sleep(200);
-        }
-*/
-        SetValueInteger($this->GetIDForIdent('actualCommand'), $type);
+        $this->SetBuffer('actualCommand', $type);
 
         $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
-        //$this->debug('sendCommand', json_encode($cmdArr));
 
         return true;
     }
 
 
     public function resetCmd(){
-        SetValueInteger($this->GetIDForIdent('actualCommand'), Commands::none);
+        $this->SetBuffer('actualCommand', Commands::none);
     }
 
     public function initDevice(){
