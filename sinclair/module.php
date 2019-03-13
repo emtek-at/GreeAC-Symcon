@@ -16,7 +16,7 @@ abstract class DeviceParam
     const Swinger = "SwUpDn";
     const SetTemperature = "SetTem";
     const ActTemperature = "TemSen";
-    const OptDry = "Blo";
+    const OptXFan = "Blo";
     const OptHealth = "Health";
     const OptLight = "Lig";
     const OptSleep1 = "SwhSlp";
@@ -111,7 +111,7 @@ class sinclair extends IPSModule {
             $this->RegisterVariableInteger("fan", $this->Translate("varFan"), 'Sinclair.DeviceFan', 5);
             $this->RegisterVariableInteger("swinger", $this->Translate("varSwinger"), 'Sinclair.DeviceSwinger', 6);
             $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), 'Sinclair.ActTemp', 7);
-            $this->RegisterVariableBoolean("optDry", $this->Translate("varOptDry"), '~Switch', 8);
+            $this->RegisterVariableBoolean("optXFan", $this->Translate("varOptXFan"), '~Switch', 8);
             $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '~Switch', 9);
             $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"), '~Switch', 10);
             $this->RegisterVariableBoolean("optSleep", $this->Translate("varOptSleep"), '~Switch', 11);
@@ -126,7 +126,7 @@ class sinclair extends IPSModule {
             IPS_SetIcon($this->GetIDForIdent('swinger'), 'WindSpeed');
             IPS_SetIcon($this->GetIDForIdent('setTemp'), 'Temperature');
             IPS_SetIcon($this->GetIDForIdent('actTemp'), 'Temperature');
-            IPS_SetIcon($this->GetIDForIdent('optDry'), 'Drops');
+            IPS_SetIcon($this->GetIDForIdent('optXFan'), 'WindDirection');
             IPS_SetIcon($this->GetIDForIdent('optHealth'), 'Tree');
             IPS_SetIcon($this->GetIDForIdent('optLight'), 'Light');
             IPS_SetIcon($this->GetIDForIdent('optSleep'), 'Moon');
@@ -140,7 +140,7 @@ class sinclair extends IPSModule {
             $this->EnableAction("fan");
             $this->EnableAction("swinger");
             $this->EnableAction("setTemp");
-            $this->EnableAction("optDry");
+            $this->EnableAction("optXFan");
             $this->EnableAction("optHealth");
             $this->EnableAction("optLight");
             $this->EnableAction("optSleep");
@@ -193,8 +193,8 @@ class sinclair extends IPSModule {
             case 'setTemp':
                 $this->setTemp($Value);
                 break;
-            case 'optDry':
-                $this->setOptDry($Value);
+            case 'optXFan':
+                $this->setOptXFan($Value);
                 break;
             case 'optHealth':
                 $this->setOptHealth($Value);
@@ -288,7 +288,7 @@ class sinclair extends IPSModule {
         $pack = array(
             't' => 'status',
             'mac' => $this->getMacUnformatted(),
-            'cols' => array(DeviceParam::Power, DeviceParam::Mode, DeviceParam::SetTemperature, DeviceParam::ActTemperature, DeviceParam::Fanspeed, DeviceParam::Swinger, DeviceParam::OptAir, DeviceParam::OptDry, DeviceParam::OptEco, DeviceParam::OptHealth, DeviceParam::OptLight, DeviceParam::OptSleep1)
+            'cols' => array(DeviceParam::Power, DeviceParam::Mode, DeviceParam::SetTemperature, DeviceParam::ActTemperature, DeviceParam::Fanspeed, DeviceParam::Swinger, DeviceParam::OptAir, DeviceParam::OptXFan, DeviceParam::OptEco, DeviceParam::OptHealth, DeviceParam::OptLight, DeviceParam::OptSleep1)
         );
         $this->sendCommand(Commands::status, $this->getRequest($pack, false));
     }
@@ -314,8 +314,8 @@ class sinclair extends IPSModule {
         $cmd = $this->getCommand(array(DeviceParam::SetTemperature), array($newVal));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
-    public function setOptDry(bool $newVal){
-        $cmd = $this->getCommand(array(DeviceParam::OptDry), array($newVal ? 1 : 0));
+    public function setOptXFan(bool $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::OptXFan), array($newVal ? 1 : 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
     public function setOptHealth(bool $newVal){
@@ -361,8 +361,8 @@ class sinclair extends IPSModule {
                 case DeviceParam::ActTemperature:
                     SetValueInteger($this->GetIDForIdent('actTemp'), $dats[$i]-40);
                     break;
-                case DeviceParam::OptDry:
-                    SetValueBoolean($this->GetIDForIdent('optDry'), $dats[$i]!=0 ? true : false);
+                case DeviceParam::OptXFan:
+                    SetValueBoolean($this->GetIDForIdent('optXFan'), $dats[$i]!=0 ? true : false);
                     break;
                 case DeviceParam::OptHealth:
                     SetValueBoolean($this->GetIDForIdent('optHealth'), $dats[$i]!=0 ? true : false);
