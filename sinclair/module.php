@@ -89,8 +89,8 @@ class sinclair extends IPSModule {
 
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 2, $this->Translate("paDeviceFan-3"), 'Speedo-50', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 3, $this->Translate("paDeviceFan-5"), 'Speedo-100', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 2, $this->Translate("paDeviceFan-2"), 'Speedo-50', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 3, $this->Translate("paDeviceFan-3"), 'Speedo-100', -1);
 
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
