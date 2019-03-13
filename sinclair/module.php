@@ -27,7 +27,7 @@ abstract class DeviceParam
 
 // Klassendefinition
 class sinclair extends IPSModule {
-    const debug = true;
+    const debug = false;
     const defaultCryptKey = 'a3K8Bx%2r8Y7#xDh';
 
 
@@ -65,7 +65,6 @@ class sinclair extends IPSModule {
         if (strlen($host) > 0)
         {
             //Instanz ist aktiv
-            //$this->SetStatus(101);
             if(!IPS_VariableProfileExists('Sinclair.DeviceMode'))
                 IPS_CreateVariableProfile('Sinclair.DeviceMode', 1);
             if(!IPS_VariableProfileExists('Sinclair.DeviceFan3'))
@@ -403,7 +402,7 @@ class sinclair extends IPSModule {
                     SetValueBoolean($this->GetIDForIdent('optEco'), $dats[$i]!=0 ? true : false);
                     break;
                 case DeviceParam::OptAir:
-                    if($this->ReadPropertyBoolean("freshAir"))
+                    if($this->GetIDForIdent('optAir'))
                         SetValueBoolean($this->GetIDForIdent('optAir'), $dats[$i]!=0 ? true : false);
                     break;
             }
