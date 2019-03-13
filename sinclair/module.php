@@ -309,10 +309,26 @@ class sinclair extends IPSModule {
     }
     public function getStatus(){
         //TODO wenn kein device key -> init
+
+        $cols = array();
+        $cols[] = DeviceParam::Power;
+        $cols[] = DeviceParam::Mode;
+        $cols[] = DeviceParam::SetTemperature;
+        $cols[] = DeviceParam::ActTemperature;
+        $cols[] = DeviceParam::Fanspeed;
+        $cols[] = DeviceParam::Swinger;
+        if($this->ReadPropertyBoolean("freshAir"))
+            $cols[] = DeviceParam::OptAir;
+        $cols[] = DeviceParam::OptXFan;
+        $cols[] = DeviceParam::OptEco;
+        $cols[] = DeviceParam::OptHealth;
+        $cols[] = DeviceParam::OptLight;
+        $cols[] = DeviceParam::OptSleep1;
+
         $pack = array(
             't' => 'status',
             'mac' => $this->getMacUnformatted(),
-            'cols' => array(DeviceParam::Power, DeviceParam::Mode, DeviceParam::SetTemperature, DeviceParam::ActTemperature, DeviceParam::Fanspeed, DeviceParam::Swinger, DeviceParam::OptAir, DeviceParam::OptXFan, DeviceParam::OptEco, DeviceParam::OptHealth, DeviceParam::OptLight, DeviceParam::OptSleep1)
+            'cols' => $cols
         );
         $this->sendCommand(Commands::status, $this->getRequest($pack, false));
     }
@@ -402,7 +418,7 @@ class sinclair extends IPSModule {
                     SetValueBoolean($this->GetIDForIdent('optEco'), $dats[$i]!=0 ? true : false);
                     break;
                 case DeviceParam::OptAir:
-                    if($this->GetIDForIdent('optAir'))
+                    if($this->ReadPropertyBoolean("freshAir"))
                         SetValueBoolean($this->GetIDForIdent('optAir'), $dats[$i]!=0 ? true : false);
                     break;
             }
