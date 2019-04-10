@@ -14,6 +14,7 @@ abstract class DeviceParam
     const Mode = "Mod";
     const Fanspeed = "WdSpd";
     const Swinger = "SwUpDn";
+    const SwingerLeRi = "SwingLfRig";
     const SetTemperature = "SetTem";
     const ActTemperature = "TemSen";
     const OptXFan = "Blo";
@@ -45,6 +46,7 @@ class sinclair extends IPSModule {
 
         $this->RegisterPropertyString("host", "");
         $this->RegisterPropertyInteger("fanSteps", 3);
+        $this->RegisterPropertyBoolean("swingLeRi", false);
         $this->RegisterPropertyBoolean("freshAir", false);
         $this->RegisterPropertyInteger("statusTimer", 60);
 
@@ -61,6 +63,7 @@ class sinclair extends IPSModule {
 
         $host = $this->ReadPropertyString("host");
         $fanSteps = $this->ReadPropertyInteger("fanSteps");
+        $hasSwingLeRi = $this->ReadPropertyBoolean("swingLeRi");
         $hasFreshAir = $this->ReadPropertyBoolean("freshAir");
         if (strlen($host) > 0)
         {
@@ -141,21 +144,25 @@ class sinclair extends IPSModule {
             $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), 'Sinclair.SetTemp', 4);
             $this->RegisterVariableInteger("fan", $this->Translate("varFan"), 'Sinclair.DeviceFan'.$fanSteps, 5);
             $this->RegisterVariableInteger("swinger", $this->Translate("varSwinger"), 'Sinclair.DeviceSwinger', 6);
-            $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), 'Sinclair.ActTemp', 7);
-            $this->RegisterVariableBoolean("optXFan", $this->Translate("varOptXFan"), '~Switch', 8);
-            $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '~Switch', 9);
-            $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"), '~Switch', 10);
-            $this->RegisterVariableBoolean("optSleep", $this->Translate("varOptSleep"), '~Switch', 11);
-            $this->RegisterVariableBoolean("optEco", $this->Translate("varOptEco"), '~Switch', 12);
+            if($hasSwingLeRi)
+                $this->RegisterVariableInteger("swingerLeRi", $this->Translate("varSwingerLeRi"), '', 7);
+            $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), 'Sinclair.ActTemp', 8);
+            $this->RegisterVariableBoolean("optXFan", $this->Translate("varOptXFan"), '~Switch', 9);
+            $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '~Switch', 10);
+            $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"), '~Switch', 11);
+            $this->RegisterVariableBoolean("optSleep", $this->Translate("varOptSleep"), '~Switch', 12);
+            $this->RegisterVariableBoolean("optEco", $this->Translate("varOptEco"), '~Switch', 13);
             if($hasFreshAir)
-                $this->RegisterVariableBoolean("optAir", $this->Translate("varOptAir"), '~Switch', 13);
-            $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"), '', 14);
-            $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"), '', 15);
-            $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"), '', 16);
+                $this->RegisterVariableBoolean("optAir", $this->Translate("varOptAir"), '~Switch', 14);
+            $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"), '', 15);
+            $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"), '', 16);
+            $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"), '', 17);
             //$this->RegisterVariableInteger("actualCommand", $this->Translate("varActualCommand"), '', 17);
 
             IPS_SetIcon($this->GetIDForIdent('power'), 'Power');
             IPS_SetIcon($this->GetIDForIdent('swinger'), 'WindSpeed');
+            if($hasSwingLeRi)
+                IPS_SetIcon($this->GetIDForIdent('swingerLeRi'), 'WindSpeed');
             IPS_SetIcon($this->GetIDForIdent('setTemp'), 'Temperature');
             IPS_SetIcon($this->GetIDForIdent('actTemp'), 'Temperature');
             IPS_SetIcon($this->GetIDForIdent('optXFan'), 'WindDirection');
@@ -172,6 +179,8 @@ class sinclair extends IPSModule {
             $this->EnableAction("mode");
             $this->EnableAction("fan");
             $this->EnableAction("swinger");
+            if($hasSwingLeRi)
+                $this->EnableAction("swingerLeRi");
             $this->EnableAction("setTemp");
             $this->EnableAction("optXFan");
             $this->EnableAction("optHealth");
@@ -223,6 +232,9 @@ class sinclair extends IPSModule {
                 break;
             case 'swinger':
                 $this->setSwinger($Value);
+                break;
+            case 'swingerLeRi':
+                $this->setSwingerLeRi($Value);
                 break;
             case 'setTemp':
                 $this->setTemp($Value);
@@ -331,6 +343,8 @@ class sinclair extends IPSModule {
         $cols[] = DeviceParam::ActTemperature;
         $cols[] = DeviceParam::Fanspeed;
         $cols[] = DeviceParam::Swinger;
+        if($this->ReadPropertyBoolean("swingLeRi"))
+            $cols[] = DeviceParam::SwingerLeRi;
         if($this->ReadPropertyBoolean("freshAir"))
             $cols[] = DeviceParam::OptAir;
         $cols[] = DeviceParam::OptXFan;
@@ -381,6 +395,10 @@ class sinclair extends IPSModule {
         $cmd = $this->getCommand(array(DeviceParam::Swinger), array($newVal));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
+    public function setSwingerLeRi(int $newVal){
+        $cmd = $this->getCommand(array(DeviceParam::SwingerLeRi), array($newVal));
+        $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
+    }
     public function setTemp(int $newVal){
         $cmd = $this->getCommand(array(DeviceParam::SetTemperature), array($newVal));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
@@ -425,6 +443,10 @@ class sinclair extends IPSModule {
                     break;
                 case DeviceParam::Swinger:
                     SetValueInteger($this->GetIDForIdent('swinger'), $dats[$i]);
+                    break;
+                case DeviceParam::SwingerLeRi:
+                    if($this->ReadPropertyBoolean("swingLeRi"))
+                        SetValueInteger($this->GetIDForIdent('swingerLeRi'), $dats[$i]);
                     break;
                 case DeviceParam::SetTemperature:
                     SetValueInteger($this->GetIDForIdent('setTemp'), $dats[$i]);
