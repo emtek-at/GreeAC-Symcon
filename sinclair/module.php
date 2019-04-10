@@ -318,7 +318,11 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::bind, $this->getRequest($pack, true));
     }
     public function getStatus(){
-        //TODO wenn kein device key -> init
+        // wenn kein device key -> init
+        if(empty(GetValueString($this->GetIDForIdent('deviceKey')))){
+            $this->initDevice();
+            return;
+        }
 
         $cols = array();
         $cols[] = DeviceParam::Power;
@@ -345,7 +349,24 @@ class sinclair extends IPSModule {
 
 
     public function setPower(bool $newVal){
-        $cmd = $this->getCommand(array(DeviceParam::Power, DeviceParam::OptSleep1, DeviceParam::OptSleep2, DeviceParam::OptAir), array($newVal ? 1 : 0, 0, 0, 0));
+        $cmd = $this->getCommand(array(DeviceParam::Power, DeviceParam::OptSleep1, DeviceParam::OptSleep2,
+            DeviceParam::Mode,
+            DeviceParam::Fanspeed, "Quiet", "Tur",
+            DeviceParam::Swinger,
+            DeviceParam::SetTemperature,
+            DeviceParam::OptXFan,
+            DeviceParam::OptHealth,
+            DeviceParam::OptLight,
+            DeviceParam::OptEco),
+            array($newVal ? 1 : 0, 0, 0,
+            GetValueInteger($this->GetIDForIdent('mode')),
+            GetValueInteger($this->GetIDForIdent('fan')), 0, 0,
+            GetValueInteger($this->GetIDForIdent('swinger')),
+            GetValueInteger($this->GetIDForIdent('setTemp')),
+            GetValueBoolean($this->GetIDForIdent('optXFan')) ? 1 : 0,
+            GetValueBoolean($this->GetIDForIdent('optHealth')) ? 1 : 0,
+            GetValueBoolean($this->GetIDForIdent('optLight')) ? 1 : 0,
+            GetValueBoolean($this->GetIDForIdent('optEco')) ? 1 : 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
     public function setMode(int $newVal){
