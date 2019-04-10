@@ -53,7 +53,14 @@
       "paDeviceSwinger-8" : "Swing Oben Mitte -> Unten",
       "paDeviceSwinger-9" : "Swing Oben Mitte -> Unten Mitte",
       "paDeviceSwinger-10" : "Swing Oben -> Unten Mitte",
-      "paDeviceSwinger-11" : "Swing Oben -> Mitte"
+      "paDeviceSwinger-11" : "Swing Oben -> Mitte",
+      "paDeviceSwingerLeRi-0": "Stopp",
+      "paDeviceSwingerLeRi-1": "Swing Links -> Rechts",
+      "paDeviceSwingerLeRi-2": "Fix Links",
+      "paDeviceSwingerLeRi-3": "Fix Links Mitte",
+      "paDeviceSwingerLeRi-4": "Fix Mitte",
+      "paDeviceSwingerLeRi-5": "Fix Rechts Mitte",
+      "paDeviceSwingerLeRi-6": "Fix Rechts"
     },
     "en": {
       "formHost": "Host/IP",
@@ -108,7 +115,14 @@
       "paDeviceSwinger-8" : "Swing MiddleTop -> Bottom",
       "paDeviceSwinger-9" : "Swing MiddleTop -> MiddleBottom",
       "paDeviceSwinger-10" : "Swing Top -> MiddleBottom",
-      "paDeviceSwinger-11" : "Swing Top -> Middle"
+      "paDeviceSwinger-11" : "Swing Top -> Middle",
+      "paDeviceSwingerLeRi-0": "Stop",
+      "paDeviceSwingerLeRi-1": "Swing Left -> Right",
+      "paDeviceSwingerLeRi-2": "Fixed Left",
+      "paDeviceSwingerLeRi-3": "Fixed Left Middle",
+      "paDeviceSwingerLeRi-4": "Fixed Middle",
+      "paDeviceSwingerLeRi-5": "Fixed Right Middle",
+      "paDeviceSwingerLeRi-6": "Fixed Right"
     }
   }
 }
