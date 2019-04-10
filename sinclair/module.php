@@ -71,6 +71,8 @@ class sinclair extends IPSModule {
                 IPS_CreateVariableProfile('Sinclair.DeviceFan3', 1);
             if(!IPS_VariableProfileExists('Sinclair.DeviceFan5'))
                 IPS_CreateVariableProfile('Sinclair.DeviceFan5', 1);
+            if(!IPS_VariableProfileExists('Sinclair.DeviceFan6'))
+                IPS_CreateVariableProfile('Sinclair.DeviceFan6', 1);
             if(!IPS_VariableProfileExists('Sinclair.DeviceFan7'))
                 IPS_CreateVariableProfile('Sinclair.DeviceFan7', 1);
             if(!IPS_VariableProfileExists('Sinclair.DeviceSwinger'))
@@ -97,6 +99,14 @@ class sinclair extends IPSModule {
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 3, $this->Translate("paDeviceFan-3"), 'Speedo-50', -1);
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 4, $this->Translate("paDeviceFan-4"), 'Speedo-75', -1);
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 5, $this->Translate("paDeviceFan-5"), 'Speedo-100', -1);
+
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 2, $this->Translate("paDeviceFan-2"), 'Speedo-25', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 3, $this->Translate("paDeviceFan-3"), 'Speedo-50', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 4, $this->Translate("paDeviceFan-4"), 'Speedo-50', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 5, $this->Translate("paDeviceFan-5"), 'Speedo-75', -1);
+            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 6, $this->Translate("paDeviceFan-6"), 'Speedo-100', -1);
 
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
             IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);

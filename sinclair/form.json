@@ -6,6 +6,7 @@
       "options": [
         { "caption": "formFanSteps3", "value": 3 },
         { "caption": "formFanSteps5", "value": 5 },
+        { "caption": "formFanSteps6", "value": 6 },
         { "caption": "formFanSteps7", "value": 7 }
       ]},
     { "type": "CheckBox", "name": "freshAir", "caption": "formFreshAir" },
