@@ -173,10 +173,10 @@ class sinclair extends IPSModule {
             IPS_SetIcon($this->GetIDForIdent('power'), 'Power');
             IPS_SetIcon($this->GetIDForIdent('swinger'), 'WindSpeed');
             if($hasSwingLeRi)
-                IPS_SetIcon($this->GetIDForIdent('swingerLeRi'), 'WindSpeed');
+                IPS_SetIcon($this->GetIDForIdent('swingerLeRi'), 'WindDirection');
             IPS_SetIcon($this->GetIDForIdent('setTemp'), 'Temperature');
             IPS_SetIcon($this->GetIDForIdent('actTemp'), 'Temperature');
-            IPS_SetIcon($this->GetIDForIdent('optXFan'), 'WindDirection');
+            IPS_SetIcon($this->GetIDForIdent('optXFan'), 'TurnRight');
             IPS_SetIcon($this->GetIDForIdent('optHealth'), 'Tree');
             IPS_SetIcon($this->GetIDForIdent('optLight'), 'Light');
             IPS_SetIcon($this->GetIDForIdent('optSleep'), 'Moon');
