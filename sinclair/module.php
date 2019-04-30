@@ -363,11 +363,10 @@ class sinclair extends IPSModule {
         if($this->GetBuffer('actualCommand') != Commands::none){
             $cmdWaitingTimeMilliSecs = (microtime(true) - $cmdQueue[0]['TIMESTAMP'])*1000;
 
-            if($cmdWaitingTimeMilliSecs >= 1000) {
+            if($cmdWaitingTimeMilliSecs >= 10000) {
                 $this->resetCmd();
                 IPS_LogMessage($this->ReadPropertyString("host"), 'waiting too long '.$cmdWaitingTimeMilliSecs);
             }else {
-                IPS_LogMessage($this->ReadPropertyString("host"), 'wait '.$cmdWaitingTimeMilliSecs);
                 return;
             }
         }
