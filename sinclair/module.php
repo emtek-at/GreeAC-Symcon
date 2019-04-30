@@ -212,7 +212,7 @@ class sinclair extends IPSModule {
 
             $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
             $this->SetBuffer("actualCommand", Commands::none);
-            $this->SetBuffer('cmdQueue', array());
+            $this->SetBuffer('cmdQueue', serialize(array()));
 
             $this->SetStatus(102);
         }
