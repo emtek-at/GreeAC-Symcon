@@ -367,7 +367,7 @@ class sinclair extends IPSModule {
                 $this->resetCmd();
                 IPS_LogMessage('sinclair', 'waiting too long '.$cmdWaitingTimeMilliSecs);
             }else {
-                IPS_LogMessage('sinclair', 'wait'.$cmdWaitingTimeMilliSecs);
+                IPS_LogMessage('sinclair', 'wait '.$cmdWaitingTimeMilliSecs);
                 return;
             }
         }
