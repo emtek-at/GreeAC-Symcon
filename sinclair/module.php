@@ -390,7 +390,6 @@ class sinclair extends IPSModule {
     }
 
     private function reduceCmdQueue(){
-        echo 'reduce';
         $cmdQueue = $this->getCmdQueue();
         array_splice($cmdQueue, 0, 1);
         $this->setCmdQueue($cmdQueue);
