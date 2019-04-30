@@ -53,6 +53,7 @@ class sinclair extends IPSModule {
         $this->RegisterPropertyInteger("statusTimer", 60);
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'Sinclair_getStatus($_IPS[\'TARGET\']);');
+        $this->RegisterTimer("queue_WorkerTimer", 0, 'Sinclair_cmdQueueWorker($_IPS[\'TARGET\']);');
 
 
         $this->RequireParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
@@ -274,9 +275,7 @@ class sinclair extends IPSModule {
 
     public function ReceiveData($JSONString){
         $this->debug('ReceiveData', $JSONString);
-        //$actCmd = GetValueInteger($this->GetIDForIdent('actualCommand'));
         $actCmd = $this->GetBuffer('actualCommand');
-        $this->resetCmd();
 
         $recObj = json_decode($JSONString);
         $bufferObj = json_decode($recObj->Buffer);
@@ -295,30 +294,84 @@ class sinclair extends IPSModule {
                 $this->debug('AC MAC', $mac);
                 $this->debug('AC Name', $decObj->name);
 
+                $this->reduceCmdQueue();
+
                 $this->deviceBind();
                 break;
             case Commands::bind:
                 SetValueString($this->GetIDForIdent('deviceKey'), $decObj->key);
 
                 $this->debug('AC DeviceKey', $decObj->key);
+
+                $this->reduceCmdQueue();
                 break;
             case Commands::status:
                 $this->parseStatus($decObj->cols, $decObj->dat);
 
                 SetValueString($this->GetIDForIdent('lastUpdate'), date("Y-m-d H:i:s"));
+
+                $this->reduceCmdQueue();
                 break;
             case Commands::cmd:
                 $this->parseStatus($decObj->opt, $decObj->p);
+
+                $this->reduceCmdQueue();
                 break;
         }
     }
 
     private function sendCommand($type, $cmdArr){
-        $this->SetBuffer('actualCommand', $type);
+        $cmdQueue = $this->GetBuffer('cmdQueue');
+        if($cmdQueue == '')
+            $cmdQueue = array();
 
-        $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
+        $cmdQueue[] = array('TYPE' => $type, 'CMD' => $cmdArr);
+        $this->SetBuffer('cmdQueue', $cmdQueue);
+
+        $this->cmdQueueWorker();
+
+        //$this->SetBuffer('actualCommand', $type);
+
+        //$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
 
         return true;
+    }
+
+    public function cmdQueueWorker(){
+        $cmdQueue = $this->GetBuffer('cmdQueue');
+
+        if($cmdQueue == '' || count($cmdQueue) == 0){
+            $this->SetTimerInterval('queue_WorkerTimer', 0);
+            return;
+        }else{
+            $this->SetTimerInterval('queue_WorkerTimer', 500);
+        }
+
+        // while waiting for response send no other command
+        if($this->GetBuffer('actualCommand') != Commands::none)
+            return;
+
+        $type = $cmdQueue[0]['TYPE'];
+        $cmdArr = $cmdQueue[0]['CMD'];
+
+        $this->SetBuffer('actualCommand', $type);
+
+        try {
+            $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
+        }catch (Exception $e){
+            IPS_LogMessage('Sinclair', $e->getMessage());
+
+            // set to none command to prevent blocking
+            $this->resetCmd();
+        }
+    }
+
+    private function reduceCmdQueue(){
+        $cmdQueue = $this->GetBuffer('cmdQueue');
+        array_splice($cmdQueue, 0, 1);
+        $this->SetBuffer('cmdQueue', $cmdQueue);
+
+        $this->resetCmd();
     }
 
 
