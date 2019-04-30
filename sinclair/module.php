@@ -358,15 +358,19 @@ class sinclair extends IPSModule {
         }else{
             $this->SetTimerInterval('queue_WorkerTimer', 500);
         }
+        echo 'queue length: '.count($cmdQueue);
 
         // while waiting for response send no other command
         if($this->GetBuffer('actualCommand') != Commands::none){
             $cmdWaitingTimeMilliSecs = (microtime(true) - $cmdQueue[0]['TIMESTAMP'])/1000;
 
-            if($cmdWaitingTimeMilliSecs >= 1000)
+            if($cmdWaitingTimeMilliSecs >= 1000) {
+                echo 'command waiting to long resend '.$cmdWaitingTimeMilliSecs;
                 $this->resetCmd();
-            else
+            }else {
+                echo 'command wait';
                 return;
+            }
         }
 
         $type = $cmdQueue[0]['TYPE'];
@@ -374,6 +378,7 @@ class sinclair extends IPSModule {
 
         try {
             $this->SetBuffer('actualCommand', $type);
+            echo 'send cmd: '.$type;
             $cmdQueue[0]['TIMESTAMP'] = microtime(true);
             $this->setCmdQueue($cmdQueue);
             $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
