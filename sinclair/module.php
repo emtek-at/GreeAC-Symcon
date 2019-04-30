@@ -374,18 +374,18 @@ class sinclair extends IPSModule {
         $type = $cmdQueue[0]['TYPE'];
         $cmdArr = $cmdQueue[0]['CMD'];
 
-        try {
+        //try {
             $this->SetBuffer('actualCommand', $type);
             $cmdQueue[0]['TIMESTAMP'] = microtime(true);
             $this->setCmdQueue($cmdQueue);
             echo 'send '.$type;
             $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
-        }catch (Exception $e){
-            IPS_LogMessage('Sinclair', $e->getMessage());
+        //}catch (Exception $e){
+        //    IPS_LogMessage('Sinclair', $e->getMessage());
 
             // set to none command to prevent blocking
-            $this->resetCmd();
-        }
+        //    $this->resetCmd();
+        //}
     }
 
     private function reduceCmdQueue(){
