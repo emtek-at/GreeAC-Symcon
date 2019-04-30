@@ -212,6 +212,7 @@ class sinclair extends IPSModule {
 
             $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
             $this->SetBuffer("actualCommand", Commands::none);
+            $this->SetBuffer('cmdQueue', array());
 
             $this->SetStatus(102);
         }
@@ -322,10 +323,24 @@ class sinclair extends IPSModule {
 
     private function sendCommand($type, $cmdArr){
         $cmdQueue = $this->getCmdQueue();
-        $cmdQueue[] = array('TYPE' => $type, 'CMD' => $cmdArr);
-        $this->setCmdQueue($cmdQueue);
+        $bAddCmd = true;
 
-        $this->cmdQueueWorker();
+        // add the status command only once in queue
+        if($type == Commands::status){
+            foreach($cmdQueue as $cmd){
+                if($cmd['TYPE'] == Commands::status){
+                    $bAddCmd = false;
+                    break;
+                }
+            }
+        }
+
+        if($bAddCmd) {
+            $cmdQueue[] = array('TYPE' => $type, 'CMD' => $cmdArr, 'TIMESTAMP' => 0);
+            $this->setCmdQueue($cmdQueue);
+
+            $this->cmdQueueWorker();
+        }
 
         //$this->SetBuffer('actualCommand', $type);
 
@@ -345,15 +360,22 @@ class sinclair extends IPSModule {
         }
 
         // while waiting for response send no other command
-        if($this->GetBuffer('actualCommand') != Commands::none)
-            return;
+        if($this->GetBuffer('actualCommand') != Commands::none){
+            $cmdWaitingTimeMilliSecs = (microtime(true) - $cmdQueue[0]['TIMESTAMP'])/1000;
+
+            if($cmdWaitingTimeMilliSecs >= 1000)
+                $this->resetCmd();
+            else
+                return;
+        }
 
         $type = $cmdQueue[0]['TYPE'];
         $cmdArr = $cmdQueue[0]['CMD'];
 
-        $this->SetBuffer('actualCommand', $type);
-
         try {
+            $this->SetBuffer('actualCommand', $type);
+            $cmdQueue[0]['TIMESTAMP'] = microtime(true);
+            $this->setCmdQueue($cmdQueue);
             $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
         }catch (Exception $e){
             IPS_LogMessage('Sinclair', $e->getMessage());
