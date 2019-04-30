@@ -362,7 +362,7 @@ class sinclair extends IPSModule {
 
         // while waiting for response send no other command
         if($this->GetBuffer('actualCommand') != Commands::none){
-            $cmdWaitingTimeMilliSecs = (microtime(true) - $cmdQueue[0]['TIMESTAMP'])/1000;
+            $cmdWaitingTimeMilliSecs = (microtime(true) - $cmdQueue[0]['TIMESTAMP'])*1000;
             echo 'block '.microtime(true).'-'.$cmdQueue[0]['TIMESTAMP'].'='.(microtime(true) - $cmdQueue[0]['TIMESTAMP']);
 
             if($cmdWaitingTimeMilliSecs >= 1000) {
