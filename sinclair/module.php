@@ -321,12 +321,9 @@ class sinclair extends IPSModule {
     }
 
     private function sendCommand($type, $cmdArr){
-        $cmdQueue = $this->GetBuffer('cmdQueue');
-        if($cmdQueue == '')
-            $cmdQueue = array();
-
+        $cmdQueue = $this->getCmdQueue();
         $cmdQueue[] = array('TYPE' => $type, 'CMD' => $cmdArr);
-        $this->SetBuffer('cmdQueue', $cmdQueue);
+        $this->setCmdQueue($cmdQueue);
 
         $this->cmdQueueWorker();
 
@@ -338,7 +335,7 @@ class sinclair extends IPSModule {
     }
 
     public function cmdQueueWorker(){
-        $cmdQueue = $this->GetBuffer('cmdQueue');
+        $cmdQueue = $this->getCmdQueue();
 
         if($cmdQueue == '' || count($cmdQueue) == 0){
             $this->SetTimerInterval('queue_WorkerTimer', 0);
@@ -367,11 +364,23 @@ class sinclair extends IPSModule {
     }
 
     private function reduceCmdQueue(){
-        $cmdQueue = $this->GetBuffer('cmdQueue');
+        $cmdQueue = $this->getCmdQueue();
         array_splice($cmdQueue, 0, 1);
-        $this->SetBuffer('cmdQueue', $cmdQueue);
+        $this->setCmdQueue($cmdQueue);
 
         $this->resetCmd();
+    }
+    private function getCmdQueue(){
+        $cmdQueue = $this->GetBuffer('cmdQueue');
+        if($cmdQueue == '')
+            $cmdQueue = array();
+        else
+            $cmdQueue = unserialize($cmdQueue);
+
+        return $cmdQueue;
+    }
+    private function setCmdQueue($queue){
+        $this->SetBuffer('cmdQueue', serialize($queue));
     }
 
 
