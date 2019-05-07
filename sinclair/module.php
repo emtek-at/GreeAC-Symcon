@@ -365,7 +365,7 @@ class sinclair extends IPSModule {
 
             if($cmdWaitingTimeMilliSecs >= 10000) {
                 $this->resetCmd();
-                IPS_LogMessage($this->ReadPropertyString("host"), 'waiting too long '.$cmdWaitingTimeMilliSecs);
+                //IPS_LogMessage($this->ReadPropertyString("host"), 'waiting too long '.$cmdWaitingTimeMilliSecs);
             }else {
                 return;
             }
@@ -378,10 +378,10 @@ class sinclair extends IPSModule {
             $this->SetBuffer('actualCommand', $type);
             $cmdQueue[0]['TIMESTAMP'] = microtime(true);
             $this->setCmdQueue($cmdQueue);
-            IPS_LogMessage($this->ReadPropertyString("host"),  'send '.$type);
+            //IPS_LogMessage($this->ReadPropertyString("host"),  'send '.$type);
             $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
         }catch (Exception $e){
-            IPS_LogMessage('Sinclair', $e->getMessage());
+            IPS_LogMessage($this->ReadPropertyString("host"), $e->getMessage());
 
             // set to none command to prevent blocking
             $this->resetCmd();
@@ -389,7 +389,7 @@ class sinclair extends IPSModule {
     }
 
     private function reduceCmdQueue(){
-        IPS_LogMessage($this->ReadPropertyString("host"),  'reduce ');
+        //($this->ReadPropertyString("host"),  'reduce ');
         $cmdQueue = $this->getCmdQueue();
         array_splice($cmdQueue, 0, 1);
         $this->setCmdQueue($cmdQueue);
