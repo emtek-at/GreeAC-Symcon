@@ -334,6 +334,8 @@ class sinclair extends IPSModule {
                 }
             }
         }
+        if(count($cmdQueue) > 4)
+            $bAddCmd = false;
 
         if($bAddCmd) {
             $cmdQueue[] = array('TYPE' => $type, 'CMD' => $cmdArr, 'TIMESTAMP' => 0);
