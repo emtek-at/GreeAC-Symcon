@@ -559,6 +559,10 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
 
+    public function beep(){
+        $this->setOptLight(GetValueBoolean($this->GetIDForIdent('optHealth')));
+    }
+
 
     private function parseStatus($cols, $dats){
         for($i=0;$i<count($cols);$i++){
