@@ -337,6 +337,13 @@ class sinclair extends IPSModule {
         if(count($cmdQueue) > 4)
             $bAddCmd = false;
 
+        // empty queue if init or bind commands are sent
+        if($type == Commands::scan || $type == Commands::bind){
+            $this->resetCmd();
+            $cmdQueue = array();
+            $bAddCmd = true;
+        }
+
         if($bAddCmd) {
             $cmdQueue[] = array('TYPE' => $type, 'CMD' => $cmdArr, 'TIMESTAMP' => 0);
             $this->setCmdQueue($cmdQueue);
@@ -358,7 +365,7 @@ class sinclair extends IPSModule {
             $this->SetTimerInterval('queue_WorkerTimer', 0);
             return;
         }else{
-            $this->SetTimerInterval('queue_WorkerTimer', 500);
+            $this->SetTimerInterval('queue_WorkerTimer', 1000);
         }
 
         // while waiting for response send no other command
@@ -368,6 +375,8 @@ class sinclair extends IPSModule {
             if($cmdWaitingTimeMilliSecs >= 10000) {
                 $this->resetCmd();
                 //IPS_LogMessage($this->ReadPropertyString("host"), 'waiting too long '.$cmdWaitingTimeMilliSecs);
+                $this->SetTimerInterval('queue_WorkerTimer', 60000);
+                return;
             }else {
                 return;
             }
