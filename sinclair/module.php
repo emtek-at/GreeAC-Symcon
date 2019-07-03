@@ -474,11 +474,11 @@ class sinclair extends IPSModule {
         // if no device key or last change is older then 15 minutes -> init
         $varInfo = IPS_GetVariable ($this->GetIDForIdent('lastUpdate'));
         $lastStatusUpdateAgeSec = (time() - $varInfo['VariableChanged']);
-        if(empty(GetValueString($this->GetIDForIdent('deviceKey'))) ||
-            $lastStatusUpdateAgeSec > 15*60){
-            $this->initDevice();
-            return;
-        }
+        //if(empty(GetValueString($this->GetIDForIdent('deviceKey'))) ||
+        //    $lastStatusUpdateAgeSec > 15*60){
+        //    $this->initDevice();
+        //    return;
+        //}
 
         $cols = array();
         $cols[] = DeviceParam::Power;
