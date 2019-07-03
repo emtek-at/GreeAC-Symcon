@@ -214,10 +214,26 @@ class sinclair extends IPSModule {
             $this->SetBuffer("actualCommand", Commands::none);
             $this->SetBuffer('cmdQueue', serialize(array()));
 
+
             $ParentID = $this->GetParent();
-            if(IPS_HasChanges($ParentID))
-            {
-                IPS_ApplyChanges($ParentID);
+
+            if($ParentID > 0) {
+                if(IPS_GetProperty($ParentID, 'Host') != $this->ReadPropertyString('host')) {
+                    IPS_SetProperty($ParentID, 'Host', $this->ReadPropertyString('host'));
+                }
+                if(IPS_GetProperty($ParentID, 'Open') != true) {
+                    IPS_SetProperty($ParentID, 'Open', true);
+                }
+                if(IPS_HasChanges($ParentID))
+                {
+                    $Result = @IPS_ApplyChanges($ParentID);
+                    if($Result) {
+                        $this->SendDebug("ApplyChanges", "Einrichtung des Client Socket erfolgreich", 0);
+                    }
+                    else{
+                        $this->SendDebug("ApplyChanges", "Einrichtung des Client Socket nicht erfolgreich!", 0);
+                    }
+                }
             }
 
             $this->SetStatus(102);
