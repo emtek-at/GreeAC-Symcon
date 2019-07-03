@@ -362,7 +362,12 @@ class sinclair extends IPSModule {
         $cmdQueue = $this->getCmdQueue();
 
         if($cmdQueue == '' || count($cmdQueue) == 0){
+            // queue is empty -> disable timer
             $this->SetTimerInterval('queue_WorkerTimer', 0);
+            return;
+        }else if(!@Sys_Ping($this->ReadPropertyString(''), 1000)){
+            // device is not pingable -> retry in 10 seconds
+            $this->SetTimerInterval('queue_WorkerTimer', 10000);
             return;
         }else{
             $this->SetTimerInterval('queue_WorkerTimer', 1000);
@@ -438,8 +443,11 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::bind, $this->getRequest($pack, true));
     }
     public function getStatus(){
-        // wenn kein device key -> init
-        if(empty(GetValueString($this->GetIDForIdent('deviceKey')))){
+        // if no device key or last change is older then 15 minutes -> init
+        $varInfo = IPS_GetVariable ($this->GetIDForIdent('lastUpdate'));
+        $lastStatusUpdateAgeSec = (time() - $varInfo['VariableChanged']);
+        if(empty(GetValueString($this->GetIDForIdent('deviceKey'))) ||
+            $lastStatusUpdateAgeSec > 15*60){
             $this->initDevice();
             return;
         }
