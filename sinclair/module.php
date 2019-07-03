@@ -389,6 +389,7 @@ class sinclair extends IPSModule {
             return;
         }else if(!@Sys_Ping($this->ReadPropertyString(''), 1000)){
             // device is not pingable -> retry in 10 seconds
+            $this->SendDebug('Sinclair QueueWorker', 'device not pingabley', 0);
             $this->SetTimerInterval('queue_WorkerTimer', 10000);
             return;
         }else{
