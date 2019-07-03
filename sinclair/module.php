@@ -367,6 +367,7 @@ class sinclair extends IPSModule {
         }
 
         if($bAddCmd) {
+            $this->SendDebug('Sinclair QueueWorker', 'add command '.$type, 0);
             $cmdQueue[] = array('TYPE' => $type, 'CMD' => $cmdArr, 'TIMESTAMP' => 0);
             $this->setCmdQueue($cmdQueue);
 
@@ -389,7 +390,7 @@ class sinclair extends IPSModule {
             return;
         }else if(!@Sys_Ping($this->ReadPropertyString(''), 1000)){
             // device is not pingable -> retry in 10 seconds
-            $this->SendDebug('Sinclair QueueWorker', 'device not pingabley', 0);
+            $this->SendDebug('Sinclair QueueWorker', 'device not pingable', 0);
             $this->SetTimerInterval('queue_WorkerTimer', 10000);
             return;
         }else{
