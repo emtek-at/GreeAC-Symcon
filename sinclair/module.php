@@ -352,15 +352,19 @@ class sinclair extends IPSModule {
             foreach($cmdQueue as $cmd){
                 if($cmd['TYPE'] == Commands::status){
                     $bAddCmd = false;
+                    $this->SendDebug('Sinclair QueueWorker', 'status command already in queue', 0);
                     break;
                 }
             }
         }
-        if(count($cmdQueue) > 4)
+        if(count($cmdQueue) > 4) {
+            $this->SendDebug('Sinclair QueueWorker', 'more then 4 commands in queue', 0);
             $bAddCmd = false;
+        }
 
         // empty queue if init or bind commands are sent
         if($type == Commands::scan || $type == Commands::bind){
+            $this->SendDebug('Sinclair QueueWorker', 'sending init or bind command -> empty queue', 0);
             $this->resetCmd();
             $cmdQueue = array();
             $bAddCmd = true;
