@@ -214,7 +214,7 @@ class sinclair extends IPSModule {
             $this->SetBuffer("actualCommand", Commands::none);
             $this->SetBuffer('cmdQueue', serialize(array()));
 
-            $ParentID = $this->GetParentID();
+            $ParentID = $this->GetParent();
             if(IPS_HasChanges($ParentID))
             {
                 IPS_ApplyChanges($ParentID);
