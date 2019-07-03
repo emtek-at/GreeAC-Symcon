@@ -466,6 +466,8 @@ class sinclair extends IPSModule {
             return;
         }
 
+        $this->log('test', 'hallo');
+
         $cols = array();
         $cols[] = DeviceParam::Power;
         $cols[] = DeviceParam::Mode;
