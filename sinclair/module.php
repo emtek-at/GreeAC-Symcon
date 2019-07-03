@@ -214,7 +214,7 @@ class sinclair extends IPSModule {
             $this->SetBuffer("actualCommand", Commands::none);
             $this->SetBuffer('cmdQueue', serialize(array()));
 
-
+/*
             $ParentID = $this->GetParent();
 
             if($ParentID > 0) {
@@ -235,7 +235,7 @@ class sinclair extends IPSModule {
                     }
                 }
             }
-
+*/
             $this->SetStatus(102);
         }
         else
@@ -392,12 +392,12 @@ class sinclair extends IPSModule {
             // queue is empty -> disable timer
             $this->SetTimerInterval('queue_WorkerTimer', 0);
             return;
-        }else if(!@Sys_Ping($this->ReadPropertyString('host'), 1000)){
+        }/*else if(!@Sys_Ping($this->ReadPropertyString('host'), 1000)){
             // device is not pingable -> retry in 10 seconds
             $this->SendDebug('Sinclair QueueWorker', 'device not pingable', 0);
             $this->SetTimerInterval('queue_WorkerTimer', 10000);
             return;
-        }else{
+        }*/else{
             $this->SetTimerInterval('queue_WorkerTimer', 1000);
         }
 
