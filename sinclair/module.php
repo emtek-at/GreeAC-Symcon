@@ -204,17 +204,13 @@ class sinclair extends IPSModule {
 
             IPS_SetHidden($this->GetIDForIdent('deviceKey'), true);
 
-
-            $this->debug('host', $host);
-
             $statusInterval = $this->ReadPropertyInteger("statusTimer");
-            $this->debug('Update Status Interval', $statusInterval.' sec');
 
             $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
             $this->SetBuffer("actualCommand", Commands::none);
             $this->SetBuffer('cmdQueue', serialize(array()));
 
-/*
+
             $ParentID = $this->GetParent();
 
             if($ParentID > 0) {
@@ -228,14 +224,14 @@ class sinclair extends IPSModule {
                 {
                     $Result = @IPS_ApplyChanges($ParentID);
                     if($Result) {
-                        $this->SendDebug("ApplyChanges", "Einrichtung des Client Socket erfolgreich", 0);
+                        IPS_LogMessage("Sinclair ApplyChanges", "Einrichtung des Client Socket erfolgreich", 0);
                     }
                     else{
-                        $this->SendDebug("ApplyChanges", "Einrichtung des Client Socket nicht erfolgreich!", 0);
+                        IPS_LogMessage("Sinclair ApplyChanges", "Einrichtung des Client Socket nicht erfolgreich!", 0);
                     }
                 }
             }
-*/
+
             $this->SetStatus(102);
         }
         else
@@ -252,7 +248,6 @@ class sinclair extends IPSModule {
     }
 
     public function RequestAction($Ident, $Value) {
-        $this->debug('RequestAction', $Ident.': '.$Value);
         switch($Ident) {
             case 'power':
                 $this->setPower($Value);
@@ -297,7 +292,6 @@ class sinclair extends IPSModule {
     }
 
     public function ReceiveData($JSONString){
-        $this->debug('ReceiveData', $JSONString);
         $actCmd = $this->GetBuffer('actualCommand');
 
         $recObj = json_decode($JSONString);
@@ -306,16 +300,11 @@ class sinclair extends IPSModule {
         $decrypted = $this->decrpyt($bufferObj->pack, $key);
         $decObj = json_decode($decrypted);
 
-        $this->debug('Pack decrypted', $decrypted);
-
         switch($actCmd){
             case Commands::scan:
                 $mac = strtoupper(implode(':', str_split($decObj->mac, 2)));
                 SetValueString($this->GetIDForIdent('macAddress'), $mac);
                 SetValueString($this->GetIDForIdent('name'), $decObj->name);
-
-                $this->debug('AC MAC', $mac);
-                $this->debug('AC Name', $decObj->name);
 
                 $this->reduceCmdQueue();
 
@@ -323,8 +312,6 @@ class sinclair extends IPSModule {
                 break;
             case Commands::bind:
                 SetValueString($this->GetIDForIdent('deviceKey'), $decObj->key);
-
-                $this->debug('AC DeviceKey', $decObj->key);
 
                 $this->reduceCmdQueue();
                 break;
@@ -352,26 +339,25 @@ class sinclair extends IPSModule {
             foreach($cmdQueue as $cmd){
                 if($cmd['TYPE'] == Commands::status){
                     $bAddCmd = false;
-                    $this->SendDebug('Sinclair QueueWorker', 'status command already in queue', 0);
+                    IPS_LogMessage('Sinclair sendCommand', 'status command already in queue', 0);
                     break;
                 }
             }
         }
         if(count($cmdQueue) > 4) {
-            $this->SendDebug('Sinclair QueueWorker', 'more then 4 commands in queue', 0);
+            IPS_LogMessage('Sinclair sendCommand', 'more then 4 commands in queue', 0);
             $bAddCmd = false;
         }
 
         // empty queue if init or bind commands are sent
         if($type == Commands::scan || $type == Commands::bind){
-            $this->SendDebug('Sinclair QueueWorker', 'sending init or bind command -> empty queue', 0);
+            IPS_LogMessage('Sinclair sendCommand', 'sending init or bind command -> empty queue', 0);
             $this->resetCmd();
             $cmdQueue = array();
             $bAddCmd = true;
         }
 
         if($bAddCmd) {
-            $this->SendDebug('Sinclair QueueWorker', 'add command '.$type, 0);
             $cmdQueue[] = array('TYPE' => $type, 'CMD' => $cmdArr, 'TIMESTAMP' => 0);
             $this->setCmdQueue($cmdQueue);
 
@@ -392,12 +378,12 @@ class sinclair extends IPSModule {
             // queue is empty -> disable timer
             $this->SetTimerInterval('queue_WorkerTimer', 0);
             return;
-        }/*else if(!@Sys_Ping($this->ReadPropertyString('host'), 1000)){
+        }else if(!@Sys_Ping($this->ReadPropertyString('host'), 1000)){
             // device is not pingable -> retry in 10 seconds
-            $this->SendDebug('Sinclair QueueWorker', 'device not pingable', 0);
+            IPS_LogMessage('Sinclair QueueWorker', 'device not pingable', 0);
             $this->SetTimerInterval('queue_WorkerTimer', 10000);
             return;
-        }*/else{
+        }else{
             $this->SetTimerInterval('queue_WorkerTimer', 1000);
         }
 
@@ -422,7 +408,6 @@ class sinclair extends IPSModule {
             $this->SetBuffer('actualCommand', $type);
             $cmdQueue[0]['TIMESTAMP'] = microtime(true);
             $this->setCmdQueue($cmdQueue);
-            //IPS_LogMessage($this->ReadPropertyString("host"),  'send '.$type);
             $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
         }catch (Exception $e){
             IPS_LogMessage($this->ReadPropertyString("host"), $e->getMessage());
@@ -471,7 +456,6 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::bind, $this->getRequest($pack, true));
     }
     public function getStatus(){
-        $this->SendDebug('Sinclair', 'get status', 0);
         // if no device key or last change is older then 15 minutes -> init
         $varInfo = IPS_GetVariable ($this->GetIDForIdent('lastUpdate'));
         $lastStatusUpdateAgeSec = (time() - $varInfo['VariableChanged']);
@@ -733,29 +717,6 @@ class sinclair extends IPSModule {
             $this->SendDebug($name, $data, 0);
     }
 
-
-    /**
-     * Check if a parent is active
-     * @param $id integer InstanceID
-     * @return bool
-     */
-    protected function HasActiveParent($id = 0)
-    {
-        if ($id == 0) $id = $this->InstanceID;
-        $parent = $this->GetParent($id);
-        if ($parent > 0) {
-            $status = $this->GetInstanceStatus($parent);
-            if ($status == 102) {
-                return true;
-            } else {
-                //IPS_SetInstanceStatus($id, self::ST_NOPARENT);
-                $this->debug(__FUNCTION__, "Parent not active for Instance #" . $id);
-                return false;
-            }
-        }
-        $this->debug(__FUNCTION__, "No Parent for Instance #" . $id);
-        return false;
-    }
     //------------------------------------------------------------------------------
     /**
      * Check if a parent for Instance $id exists
