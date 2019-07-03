@@ -313,6 +313,8 @@ class sinclair extends IPSModule {
             case Commands::bind:
                 SetValueString($this->GetIDForIdent('deviceKey'), $decObj->key);
 
+                SetValueString($this->GetIDForIdent('lastUpdate'), 'bind '.date("Y-m-d H:i:s"));
+
                 $this->reduceCmdQueue();
                 break;
             case Commands::status:
