@@ -471,6 +471,7 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::bind, $this->getRequest($pack, true));
     }
     public function getStatus(){
+        $this->SendDebug('Sinclair', 'get status', 0);
         // if no device key or last change is older then 15 minutes -> init
         $varInfo = IPS_GetVariable ($this->GetIDForIdent('lastUpdate'));
         $lastStatusUpdateAgeSec = (time() - $varInfo['VariableChanged']);
