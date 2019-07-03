@@ -46,7 +46,7 @@ class sinclair extends IPSModule {
         // Diese Zeile nicht löschen.
         parent::Create();
 
-        $this->RegisterPropertyString("host", "");
+        $this->RegisterPropertyString("host", "127.0.0.1");
         $this->RegisterPropertyInteger("fanSteps", 3);
         $this->RegisterPropertyBoolean("swingLeRi", false);
         $this->RegisterPropertyBoolean("freshAir", false);
@@ -213,6 +213,12 @@ class sinclair extends IPSModule {
             $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
             $this->SetBuffer("actualCommand", Commands::none);
             $this->SetBuffer('cmdQueue', serialize(array()));
+
+            $ParentID = $this->GetParentID();
+            if(IPS_HasChanges($ParentID))
+            {
+                IPS_ApplyChanges($ParentID);
+            }
 
             $this->SetStatus(102);
         }

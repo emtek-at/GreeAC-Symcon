@@ -19,7 +19,7 @@
   ],
   "status":
   [
-    { "code": 101, "icon": "active", "caption": "valid" },
+    { "code": 102, "icon": "active", "caption": "valid" },
     { "code": 201, "icon": "error", "caption": "form201" }
   ]
 }
