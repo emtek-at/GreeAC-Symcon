@@ -306,6 +306,8 @@ class sinclair extends IPSModule {
                 SetValueString($this->GetIDForIdent('macAddress'), $mac);
                 SetValueString($this->GetIDForIdent('name'), $decObj->name);
 
+                SetValueString($this->GetIDForIdent('lastUpdate'), 'init '.date("Y-m-d H:i:s"));
+
                 $this->reduceCmdQueue();
 
                 $this->deviceBind();
@@ -353,7 +355,7 @@ class sinclair extends IPSModule {
 
         // empty queue if init or bind commands are sent
         if($type == Commands::scan || $type == Commands::bind){
-            $this->log('sendCommand', 'sending init or bind command -> empty queue', 0);
+            $this->log('sendCommand', 'sending '.($type == Commands::scan ? 'init' : 'bind').' command -> empty queue', 0);
             $this->resetCmd();
             $cmdQueue = array();
             $bAddCmd = true;
@@ -461,9 +463,10 @@ class sinclair extends IPSModule {
         // if no device key or last change is older then 15 minutes -> init
         $varInfo = IPS_GetVariable ($this->GetIDForIdent('lastUpdate'));
         $lastStatusUpdateAgeSec = (time() - $varInfo['VariableChanged']);
+        $maxAge = $this->ReadAttributeInteger('statusTimer') * 15;
         if(empty(GetValueString($this->GetIDForIdent('deviceKey')))
-            || $lastStatusUpdateAgeSec > 15*60){
-            $this->log('getStatus', 'device key is empty or last update is more than 15 minutes ago -> init device');
+            || ($maxAge > 0 && $lastStatusUpdateAgeSec > $maxAge)){
+            $this->log('getStatus', 'device key is empty or last update is more than '.$maxAge.' seconds ago -> init device');
             $this->initDevice();
             return;
         }
