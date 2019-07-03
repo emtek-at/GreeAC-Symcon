@@ -224,10 +224,10 @@ class sinclair extends IPSModule {
                 {
                     $Result = @IPS_ApplyChanges($ParentID);
                     if($Result) {
-                        IPS_LogMessage("Sinclair ApplyChanges", "Einrichtung des Client Socket erfolgreich", 0);
+                        $this->log("ApplyChanges", "Einrichtung des Client Socket erfolgreich", 0);
                     }
                     else{
-                        IPS_LogMessage("Sinclair ApplyChanges", "Einrichtung des Client Socket nicht erfolgreich!", 0);
+                        $this->log("ApplyChanges", "Einrichtung des Client Socket nicht erfolgreich!", 0);
                     }
                 }
             }
@@ -339,19 +339,19 @@ class sinclair extends IPSModule {
             foreach($cmdQueue as $cmd){
                 if($cmd['TYPE'] == Commands::status){
                     $bAddCmd = false;
-                    IPS_LogMessage('Sinclair sendCommand', 'status command already in queue', 0);
+                    $this->log('sendCommand', 'status command already in queue', 0);
                     break;
                 }
             }
         }
         if(count($cmdQueue) > 4) {
-            IPS_LogMessage('Sinclair sendCommand', 'more then 4 commands in queue', 0);
+            log('sendCommand', 'more then 4 commands in queue', 0);
             $bAddCmd = false;
         }
 
         // empty queue if init or bind commands are sent
         if($type == Commands::scan || $type == Commands::bind){
-            IPS_LogMessage('Sinclair sendCommand', 'sending init or bind command -> empty queue', 0);
+            $this->log('sendCommand', 'sending init or bind command -> empty queue', 0);
             $this->resetCmd();
             $cmdQueue = array();
             $bAddCmd = true;
@@ -380,7 +380,7 @@ class sinclair extends IPSModule {
             return;
         }else if(!@Sys_Ping($this->ReadPropertyString('host'), 1000)){
             // device is not pingable -> retry in 10 seconds
-            IPS_LogMessage('Sinclair QueueWorker', 'device not pingable', 0);
+            $this->log('QueueWorker', 'device not pingable', 0);
             $this->SetTimerInterval('queue_WorkerTimer', 10000);
             return;
         }else{
@@ -393,7 +393,7 @@ class sinclair extends IPSModule {
 
             if($cmdWaitingTimeMilliSecs >= 10000) {
                 $this->resetCmd();
-                //IPS_LogMessage($this->ReadPropertyString("host"), 'waiting too long '.$cmdWaitingTimeMilliSecs);
+                //$this->log($this->ReadPropertyString("host"), 'waiting too long '.$cmdWaitingTimeMilliSecs);
                 $this->SetTimerInterval('queue_WorkerTimer', 60000);
                 return;
             }else {
@@ -410,7 +410,7 @@ class sinclair extends IPSModule {
             $this->setCmdQueue($cmdQueue);
             $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
         }catch (Exception $e){
-            IPS_LogMessage($this->ReadPropertyString("host"), $e->getMessage());
+            $this->log('QueueWorker', $e->getMessage());
 
             // set to none command to prevent blocking
             $this->resetCmd();
@@ -459,11 +459,12 @@ class sinclair extends IPSModule {
         // if no device key or last change is older then 15 minutes -> init
         $varInfo = IPS_GetVariable ($this->GetIDForIdent('lastUpdate'));
         $lastStatusUpdateAgeSec = (time() - $varInfo['VariableChanged']);
-        //if(empty(GetValueString($this->GetIDForIdent('deviceKey'))) ||
-        //    $lastStatusUpdateAgeSec > 15*60){
-        //    $this->initDevice();
-        //    return;
-        //}
+        if(empty(GetValueString($this->GetIDForIdent('deviceKey')))
+            || $lastStatusUpdateAgeSec > 15*60){
+            $this->log('getStatus', 'device key is empty or last update is more than 15 minutes ago -> init device');
+            $this->initDevice();
+            return;
+        }
 
         $cols = array();
         $cols[] = DeviceParam::Power;
@@ -715,6 +716,10 @@ class sinclair extends IPSModule {
     private function debug($name, $data){
         if(self::debug)
             $this->SendDebug($name, $data, 0);
+    }
+
+    private function log($name, $data){
+        IPS_LogMessage('Sinclair '.$name, $this->ReadPropertyString("host").': '.$data);
     }
 
     //------------------------------------------------------------------------------
