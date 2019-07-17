@@ -107,6 +107,92 @@ Die Instanz wird im WebFront angezeigt. Sie können die vorhandenen Funktionen n
 
 Präfix des Moduls 'SINCLAIR'
 
-'SINCLAIR_resetCmdQueue(integer $instanceId)'
+`SINCLAIR_initDevice(integer $instanceId)`
 
-leert die Commandqueue falls Probleme erkannt werden.
+Holt den DeviceKey vom Gerät, damit Kommandos gesendet werden können. Wird automatisch aufgerufen wenn der DeviceKey leer ist.
+
+`SINCLAIR_getStatus(integer $instanceId)`
+
+Fragt die Daten vom Gerät ab. Diese Funktion wird vom Timer aufgerufen.
+
+`SINCLAIR_setPower(integer $instanceId, bool $newVal)`
+
+Schaltet das Gerät ein oder aus und setzt alle Optionen wie sie in Symcon eingestellt sind. Möchte man mehrere Variablen gleichzeitig zum Gerät schicken, können diese in IP-Symcon mit `SetValue` gesetzt werden und anschließend mit `SINCLAIR_setPower` übertragen werden. Der Vorteil ist, dass das Gerät nur einmal piepst und nicht für jede Option einzeln.
+
+`SINCLAIR_setMode(integer $instanceId, int $newVal)`
+
+Setzt den Modus. Mögliche Werte:
+* 0: Auto
+* 1: Kühlen
+* 2: Trocknen
+* 3: Lüften
+* 4: Heizen
+
+`SINCLAIR_setFan(integer $instanceId, int $newVal)`
+
+Setzt die Gebläsegeschwindigkeit. Mögliche Werte je nach Konfiguration:
+* 0: Auto
+* 1-7: Geschwindigkeit
+
+`SINCLAIR_setSwinger(integer $instanceId, int $newVal)`
+
+Setzt die Gebläserichtung. Mögliche Werte je nach Konfiguration:
+* 0: Stopp
+* 1: Swing Oben -> Unten
+* 2: Fix Oben
+* 3: Fix Oben Mitte
+* 4: Fix Mitte
+* 5: Fix Unten Mitte
+* 6: Fix Unten
+* 7: Swing Mitte -> Unten 
+* 8: Swing Oben Mitte -> Unten
+* 9: Swing Oben Mitte -> Unten Mitte
+* 10: Swing Oben -> Unten Mitte
+* 11: Swing Oben -> Mitte
+
+`SINCLAIR_setSwingerLeRi(integer $instanceId, int $newVal)`
+
+Setzt die Gebläserichtung Links Rechts. Mögliche Werte je nach Konfiguration:
+* 0: Stopp
+* 1: Swing Links -> Rechts
+* 2: Fix Links
+* 3: Fix Links Mitte
+* 4: Fix Mitte
+* 5: Fix Rechts Mitte
+* 6: Fix Rechts
+
+`SINCLAIR_setTemp(integer $instanceId, int $newVal)`
+
+Setzt die Solltemperatur.
+
+`SINCLAIR_setOptXFan(integer $instanceId, bool $newVal)`
+
+Schaltet den Gebläsenachlauf ein oder aus.
+
+`SINCLAIR_setOptHealth(integer $instanceId, bool $newVal)`
+
+Schaltet den Ionisator ein oder aus.
+
+`SINCLAIR_setOptLight(integer $instanceId, bool $newVal)`
+
+Schaltet die Displaybeleuchtung ein oder aus.
+
+`SINCLAIR_setOptSleep(integer $instanceId, bool $newVal)`
+
+Schaltet den Schlafmodus ein oder aus.
+
+`SINCLAIR_setOptEco(integer $instanceId, bool $newVal)`
+
+Schaltet den Ecomodus ein oder aus.
+
+`SINCLAIR_setOptAir(integer $instanceId, bool $newVal)`
+
+Schaltet das Frischluftventil ein oder aus.
+
+`SINCLAIR_beep(integer $instanceId)`
+
+Lässt das Gerät einmal piepsen.
+
+`SINCLAIR_resetCmdQueue(integer $instanceId)`
+
+Leert die Commandqueue falls Probleme erkannt werden.

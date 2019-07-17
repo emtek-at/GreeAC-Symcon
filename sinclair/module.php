@@ -548,14 +548,23 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
     public function setFan(int $newVal){
+        if($newVal < 0 || $newVal > $this->ReadPropertyInteger("fanSteps"))
+            return;
+
         $cmd = $this->getCommand(array(DeviceParam::Fanspeed, "Quiet", "Tur"), array($newVal, 0, 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
     public function setSwinger(int $newVal){
+        if($newVal < 0 || $newVal > 11)
+            return;
+
         $cmd = $this->getCommand(array(DeviceParam::Swinger), array($newVal));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
     public function setSwingerLeRi(int $newVal){
+        if($newVal < 0 || $newVal > 6)
+            return;
+
         $cmd = $this->getCommand(array(DeviceParam::SwingerLeRi), array($newVal));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
