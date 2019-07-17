@@ -348,8 +348,8 @@ class sinclair extends IPSModule {
                 }
             }
         }
-        if(count($cmdQueue) > 4) {
-            log('sendCommand', 'more then 4 commands in queue', 0);
+        if(count($cmdQueue) > 5) {
+            log('sendCommand', 'more then 5 commands in queue', 0);
             $bAddCmd = false;
         }
 
@@ -441,10 +441,13 @@ class sinclair extends IPSModule {
     private function setCmdQueue($queue){
         $this->SetBuffer('cmdQueue', serialize($queue));
     }
-
-
-    public function resetCmd(){
+    private function resetCmd(){
         $this->SetBuffer('actualCommand', Commands::none);
+    }
+    public function resetCmdQueue(){
+        $cmdQueue = array();
+        $this->setCmdQueue($cmdQueue);
+        $this->resetCmd();
     }
 
     public function initDevice(){
@@ -495,7 +498,6 @@ class sinclair extends IPSModule {
         );
         $this->sendCommand(Commands::status, $this->getRequest($pack, false));
     }
-
 
     public function setPower(bool $newVal){
         $opts = array();
