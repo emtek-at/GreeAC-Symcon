@@ -212,7 +212,7 @@ class sinclair extends IPSModule {
 
 
             $ParentID = $this->GetParent();
-
+/*
             if($ParentID > 0) {
                 if(IPS_GetProperty($ParentID, 'Host') != $this->ReadPropertyString('host')) {
                     IPS_SetProperty($ParentID, 'Host', $this->ReadPropertyString('host'));
@@ -231,7 +231,7 @@ class sinclair extends IPSModule {
                     }
                 }
             }
-
+*/
             $this->SetStatus(102);
         }
         else
