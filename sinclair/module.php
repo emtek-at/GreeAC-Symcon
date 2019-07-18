@@ -46,7 +46,6 @@ class sinclair extends IPSModule {
         // Diese Zeile nicht löschen.
         parent::Create();
 
-        //$this->RegisterPropertyString("host", "127.0.0.1");
         $this->RegisterPropertyInteger("fanSteps", 3);
         $this->RegisterPropertyBoolean("swingLeRi", false);
         $this->RegisterPropertyBoolean("freshAir", false);
@@ -64,180 +63,182 @@ class sinclair extends IPSModule {
         // Diese Zeile nicht löschen
         parent::ApplyChanges();
 
+        $host = IPS_GetProperty($this->GetParent(), 'Host');
         $fanSteps = $this->ReadPropertyInteger("fanSteps");
         $hasSwingLeRi = $this->ReadPropertyBoolean("swingLeRi");
         $hasFreshAir = $this->ReadPropertyBoolean("freshAir");
-        if (@Sys_Ping(IPS_GetProperty($this->GetParent(), 'Host'), 1000))
-        {
-            //Instanz ist aktiv
-            if(!IPS_VariableProfileExists('Sinclair.DeviceMode'))
-                IPS_CreateVariableProfile('Sinclair.DeviceMode', 1);
-            if(!IPS_VariableProfileExists('Sinclair.DeviceFan3'))
-                IPS_CreateVariableProfile('Sinclair.DeviceFan3', 1);
-            if(!IPS_VariableProfileExists('Sinclair.DeviceFan5'))
-                IPS_CreateVariableProfile('Sinclair.DeviceFan5', 1);
-            if(!IPS_VariableProfileExists('Sinclair.DeviceFan6'))
-                IPS_CreateVariableProfile('Sinclair.DeviceFan6', 1);
-            if(!IPS_VariableProfileExists('Sinclair.DeviceFan7'))
-                IPS_CreateVariableProfile('Sinclair.DeviceFan7', 1);
-            if(!IPS_VariableProfileExists('Sinclair.DeviceSwinger'))
-                IPS_CreateVariableProfile('Sinclair.DeviceSwinger', 1);
-            if(!IPS_VariableProfileExists('Sinclair.DeviceSwingerLeRi'))
-                IPS_CreateVariableProfile('Sinclair.DeviceSwingerLeRi', 1);
-            if(!IPS_VariableProfileExists('Sinclair.SetTemp'))
-                IPS_CreateVariableProfile('Sinclair.SetTemp', 1);
-            if(!IPS_VariableProfileExists('Sinclair.ActTemp'))
-                IPS_CreateVariableProfile('Sinclair.ActTemp', 1);
 
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 0, $this->Translate("paDeviceMode-0"), 'Climate', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 1, $this->Translate("paDeviceMode-1"), 'Snowflake', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 2, $this->Translate("paDeviceMode-2"), 'Drops', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 3, $this->Translate("paDeviceMode-3"), 'Ventilation', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 4, $this->Translate("paDeviceMode-4"), 'Flame', -1);
+        if(strlen($host) == 0){
+            $this->SetStatus(101);
+            return;
+        }else if(!@Sys_Ping($host, 1000)){
+            $this->SetStatus(201);
+            return;
+        }
 
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 2, $this->Translate("paDeviceFan-2"), 'Speedo-50', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 3, $this->Translate("paDeviceFan-3"), 'Speedo-100', -1);
+        //Instanz ist aktiv
+        if(!IPS_VariableProfileExists('Sinclair.DeviceMode'))
+            IPS_CreateVariableProfile('Sinclair.DeviceMode', 1);
+        if(!IPS_VariableProfileExists('Sinclair.DeviceFan3'))
+            IPS_CreateVariableProfile('Sinclair.DeviceFan3', 1);
+        if(!IPS_VariableProfileExists('Sinclair.DeviceFan5'))
+            IPS_CreateVariableProfile('Sinclair.DeviceFan5', 1);
+        if(!IPS_VariableProfileExists('Sinclair.DeviceFan6'))
+            IPS_CreateVariableProfile('Sinclair.DeviceFan6', 1);
+        if(!IPS_VariableProfileExists('Sinclair.DeviceFan7'))
+            IPS_CreateVariableProfile('Sinclair.DeviceFan7', 1);
+        if(!IPS_VariableProfileExists('Sinclair.DeviceSwinger'))
+            IPS_CreateVariableProfile('Sinclair.DeviceSwinger', 1);
+        if(!IPS_VariableProfileExists('Sinclair.DeviceSwingerLeRi'))
+            IPS_CreateVariableProfile('Sinclair.DeviceSwingerLeRi', 1);
+        if(!IPS_VariableProfileExists('Sinclair.SetTemp'))
+            IPS_CreateVariableProfile('Sinclair.SetTemp', 1);
+        if(!IPS_VariableProfileExists('Sinclair.ActTemp'))
+            IPS_CreateVariableProfile('Sinclair.ActTemp', 1);
 
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 2, $this->Translate("paDeviceFan-2"), 'Speedo-25', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 3, $this->Translate("paDeviceFan-3"), 'Speedo-50', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 4, $this->Translate("paDeviceFan-4"), 'Speedo-75', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 5, $this->Translate("paDeviceFan-5"), 'Speedo-100', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 0, $this->Translate("paDeviceMode-0"), 'Climate', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 1, $this->Translate("paDeviceMode-1"), 'Snowflake', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 2, $this->Translate("paDeviceMode-2"), 'Drops', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 3, $this->Translate("paDeviceMode-3"), 'Ventilation', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 4, $this->Translate("paDeviceMode-4"), 'Flame', -1);
 
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 2, $this->Translate("paDeviceFan-2"), 'Speedo-25', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 3, $this->Translate("paDeviceFan-3"), 'Speedo-50', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 4, $this->Translate("paDeviceFan-4"), 'Speedo-50', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 5, $this->Translate("paDeviceFan-5"), 'Speedo-75', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 6, $this->Translate("paDeviceFan-6"), 'Speedo-100', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 2, $this->Translate("paDeviceFan-2"), 'Speedo-50', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 3, $this->Translate("paDeviceFan-3"), 'Speedo-100', -1);
 
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 2, $this->Translate("paDeviceFan-2"), 'Speedo-25', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 3, $this->Translate("paDeviceFan-3"), 'Speedo-25', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 4, $this->Translate("paDeviceFan-4"), 'Speedo-50', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 5, $this->Translate("paDeviceFan-5"), 'Speedo-75', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 6, $this->Translate("paDeviceFan-6"), 'Speedo-75', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 7, $this->Translate("paDeviceFan-7"), 'Speedo-100', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 2, $this->Translate("paDeviceFan-2"), 'Speedo-25', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 3, $this->Translate("paDeviceFan-3"), 'Speedo-50', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 4, $this->Translate("paDeviceFan-4"), 'Speedo-75', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 5, $this->Translate("paDeviceFan-5"), 'Speedo-100', -1);
 
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 0, $this->Translate("paDeviceSwinger-0"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 1, $this->Translate("paDeviceSwinger-1"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 2, $this->Translate("paDeviceSwinger-2"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 3, $this->Translate("paDeviceSwinger-3"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 4, $this->Translate("paDeviceSwinger-4"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 5, $this->Translate("paDeviceSwinger-5"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 6, $this->Translate("paDeviceSwinger-6"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 7, $this->Translate("paDeviceSwinger-7"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 8, $this->Translate("paDeviceSwinger-8"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 9, $this->Translate("paDeviceSwinger-9"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 10, $this->Translate("paDeviceSwinger-10"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 11, $this->Translate("paDeviceSwinger-11"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 2, $this->Translate("paDeviceFan-2"), 'Speedo-25', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 3, $this->Translate("paDeviceFan-3"), 'Speedo-50', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 4, $this->Translate("paDeviceFan-4"), 'Speedo-50', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 5, $this->Translate("paDeviceFan-5"), 'Speedo-75', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan6', 6, $this->Translate("paDeviceFan-6"), 'Speedo-100', -1);
 
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 0, $this->Translate("paDeviceSwingerLeRi-0"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 1, $this->Translate("paDeviceSwingerLeRi-1"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 2, $this->Translate("paDeviceSwingerLeRi-2"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 3, $this->Translate("paDeviceSwingerLeRi-3"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 4, $this->Translate("paDeviceSwingerLeRi-4"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 5, $this->Translate("paDeviceSwingerLeRi-5"), '', -1);
-            IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 6, $this->Translate("paDeviceSwingerLeRi-6"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 2, $this->Translate("paDeviceFan-2"), 'Speedo-25', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 3, $this->Translate("paDeviceFan-3"), 'Speedo-25', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 4, $this->Translate("paDeviceFan-4"), 'Speedo-50', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 5, $this->Translate("paDeviceFan-5"), 'Speedo-75', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 6, $this->Translate("paDeviceFan-6"), 'Speedo-75', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan7', 7, $this->Translate("paDeviceFan-7"), 'Speedo-100', -1);
 
-            IPS_SetVariableProfileValues('Sinclair.SetTemp', 17, 27, 1);
-            IPS_SetVariableProfileText('Sinclair.SetTemp', '', '°C');
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 0, $this->Translate("paDeviceSwinger-0"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 1, $this->Translate("paDeviceSwinger-1"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 2, $this->Translate("paDeviceSwinger-2"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 3, $this->Translate("paDeviceSwinger-3"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 4, $this->Translate("paDeviceSwinger-4"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 5, $this->Translate("paDeviceSwinger-5"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 6, $this->Translate("paDeviceSwinger-6"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 7, $this->Translate("paDeviceSwinger-7"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 8, $this->Translate("paDeviceSwinger-8"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 9, $this->Translate("paDeviceSwinger-9"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 10, $this->Translate("paDeviceSwinger-10"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwinger', 11, $this->Translate("paDeviceSwinger-11"), '', -1);
 
-            IPS_SetVariableProfileText('Sinclair.ActTemp', '', '°C');
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 0, $this->Translate("paDeviceSwingerLeRi-0"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 1, $this->Translate("paDeviceSwingerLeRi-1"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 2, $this->Translate("paDeviceSwingerLeRi-2"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 3, $this->Translate("paDeviceSwingerLeRi-3"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 4, $this->Translate("paDeviceSwingerLeRi-4"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 5, $this->Translate("paDeviceSwingerLeRi-5"), '', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceSwingerLeRi', 6, $this->Translate("paDeviceSwingerLeRi-6"), '', -1);
 
-            $this->RegisterVariableString("name", $this->Translate("varName"), '', 1);
-            $this->RegisterVariableBoolean("power", $this->Translate("varPower"), '~Switch', 2);
-            $this->RegisterVariableInteger("mode", $this->Translate("varMode"), 'Sinclair.DeviceMode', 3);
-            $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), 'Sinclair.SetTemp', 4);
-            $this->RegisterVariableInteger("fan", $this->Translate("varFan"), 'Sinclair.DeviceFan'.$fanSteps, 5);
-            $this->RegisterVariableInteger("swinger", $this->Translate("varSwinger"), 'Sinclair.DeviceSwinger', 6);
-            if($hasSwingLeRi)
-                $this->RegisterVariableInteger("swingerLeRi", $this->Translate("varSwingerLeRi"), 'Sinclair.DeviceSwingerLeRi', 7);
-            $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), 'Sinclair.ActTemp', 8);
-            $this->RegisterVariableBoolean("optXFan", $this->Translate("varOptXFan"), '~Switch', 9);
-            $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '~Switch', 10);
-            $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"), '~Switch', 11);
-            $this->RegisterVariableBoolean("optSleep", $this->Translate("varOptSleep"), '~Switch', 12);
-            $this->RegisterVariableBoolean("optEco", $this->Translate("varOptEco"), '~Switch', 13);
-            if($hasFreshAir)
-                $this->RegisterVariableBoolean("optAir", $this->Translate("varOptAir"), '~Switch', 14);
-            $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"), '', 15);
-            $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"), '', 16);
-            $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"), '', 17);
+        IPS_SetVariableProfileValues('Sinclair.SetTemp', 17, 27, 1);
+        IPS_SetVariableProfileText('Sinclair.SetTemp', '', '°C');
 
-            IPS_SetIcon($this->GetIDForIdent('power'), 'Power');
-            IPS_SetIcon($this->GetIDForIdent('swinger'), 'WindSpeed');
-            if($hasSwingLeRi)
-                IPS_SetIcon($this->GetIDForIdent('swingerLeRi'), 'WindDirection');
-            IPS_SetIcon($this->GetIDForIdent('setTemp'), 'Temperature');
-            IPS_SetIcon($this->GetIDForIdent('actTemp'), 'Temperature');
-            IPS_SetIcon($this->GetIDForIdent('optXFan'), 'TurnRight');
-            IPS_SetIcon($this->GetIDForIdent('optHealth'), 'Tree');
-            IPS_SetIcon($this->GetIDForIdent('optLight'), 'Light');
-            IPS_SetIcon($this->GetIDForIdent('optSleep'), 'Moon');
-            IPS_SetIcon($this->GetIDForIdent('optEco'), 'Leaf');
-            if($hasFreshAir)
-                IPS_SetIcon($this->GetIDForIdent('optAir'), 'WindDirection');
-            IPS_SetIcon($this->GetIDForIdent('lastUpdate'), 'Repeat');
-            IPS_SetIcon($this->GetIDForIdent('macAddress'), 'Notebook');
+        IPS_SetVariableProfileText('Sinclair.ActTemp', '', '°C');
 
-            $this->EnableAction("power");
-            $this->EnableAction("mode");
-            $this->EnableAction("fan");
-            $this->EnableAction("swinger");
-            if($hasSwingLeRi)
-                $this->EnableAction("swingerLeRi");
-            $this->EnableAction("setTemp");
-            $this->EnableAction("optXFan");
-            $this->EnableAction("optHealth");
-            $this->EnableAction("optLight");
-            $this->EnableAction("optSleep");
-            $this->EnableAction("optEco");
-            if($hasFreshAir)
-                $this->EnableAction("optAir");
+        $this->RegisterVariableString("name", $this->Translate("varName"), '', 1);
+        $this->RegisterVariableBoolean("power", $this->Translate("varPower"), '~Switch', 2);
+        $this->RegisterVariableInteger("mode", $this->Translate("varMode"), 'Sinclair.DeviceMode', 3);
+        $this->RegisterVariableInteger("setTemp", $this->Translate("varSetTemp"), 'Sinclair.SetTemp', 4);
+        $this->RegisterVariableInteger("fan", $this->Translate("varFan"), 'Sinclair.DeviceFan'.$fanSteps, 5);
+        $this->RegisterVariableInteger("swinger", $this->Translate("varSwinger"), 'Sinclair.DeviceSwinger', 6);
+        if($hasSwingLeRi)
+            $this->RegisterVariableInteger("swingerLeRi", $this->Translate("varSwingerLeRi"), 'Sinclair.DeviceSwingerLeRi', 7);
+        $this->RegisterVariableInteger("actTemp", $this->Translate("varActTemp"), 'Sinclair.ActTemp', 8);
+        $this->RegisterVariableBoolean("optXFan", $this->Translate("varOptXFan"), '~Switch', 9);
+        $this->RegisterVariableBoolean("optHealth", $this->Translate("varOptHealth"), '~Switch', 10);
+        $this->RegisterVariableBoolean("optLight", $this->Translate("varOptLight"), '~Switch', 11);
+        $this->RegisterVariableBoolean("optSleep", $this->Translate("varOptSleep"), '~Switch', 12);
+        $this->RegisterVariableBoolean("optEco", $this->Translate("varOptEco"), '~Switch', 13);
+        if($hasFreshAir)
+            $this->RegisterVariableBoolean("optAir", $this->Translate("varOptAir"), '~Switch', 14);
+        $this->RegisterVariableString("lastUpdate", $this->Translate("varLastUpdate"), '', 15);
+        $this->RegisterVariableString("macAddress", $this->Translate("varMacAddress"), '', 16);
+        $this->RegisterVariableString("deviceKey", $this->Translate("varDeviceKey"), '', 17);
 
-            IPS_SetHidden($this->GetIDForIdent('deviceKey'), true);
+        IPS_SetIcon($this->GetIDForIdent('power'), 'Power');
+        IPS_SetIcon($this->GetIDForIdent('swinger'), 'WindSpeed');
+        if($hasSwingLeRi)
+            IPS_SetIcon($this->GetIDForIdent('swingerLeRi'), 'WindDirection');
+        IPS_SetIcon($this->GetIDForIdent('setTemp'), 'Temperature');
+        IPS_SetIcon($this->GetIDForIdent('actTemp'), 'Temperature');
+        IPS_SetIcon($this->GetIDForIdent('optXFan'), 'TurnRight');
+        IPS_SetIcon($this->GetIDForIdent('optHealth'), 'Tree');
+        IPS_SetIcon($this->GetIDForIdent('optLight'), 'Light');
+        IPS_SetIcon($this->GetIDForIdent('optSleep'), 'Moon');
+        IPS_SetIcon($this->GetIDForIdent('optEco'), 'Leaf');
+        if($hasFreshAir)
+            IPS_SetIcon($this->GetIDForIdent('optAir'), 'WindDirection');
+        IPS_SetIcon($this->GetIDForIdent('lastUpdate'), 'Repeat');
+        IPS_SetIcon($this->GetIDForIdent('macAddress'), 'Notebook');
 
-            $statusInterval = $this->ReadPropertyInteger("statusTimer");
+        $this->EnableAction("power");
+        $this->EnableAction("mode");
+        $this->EnableAction("fan");
+        $this->EnableAction("swinger");
+        if($hasSwingLeRi)
+            $this->EnableAction("swingerLeRi");
+        $this->EnableAction("setTemp");
+        $this->EnableAction("optXFan");
+        $this->EnableAction("optHealth");
+        $this->EnableAction("optLight");
+        $this->EnableAction("optSleep");
+        $this->EnableAction("optEco");
+        if($hasFreshAir)
+            $this->EnableAction("optAir");
 
-            $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
-            $this->SetBuffer("actualCommand", Commands::none);
-            $this->SetBuffer('cmdQueue', serialize(array()));
+        IPS_SetHidden($this->GetIDForIdent('deviceKey'), true);
+
+        $statusInterval = $this->ReadPropertyInteger("statusTimer");
+
+        $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
+        $this->SetBuffer("actualCommand", Commands::none);
+        $this->SetBuffer('cmdQueue', serialize(array()));
 
 
 //            $ParentID = $this->GetParent();
 /*
-            if($ParentID > 0) {
-                if(IPS_GetProperty($this->GetParent(), 'Host') != $this->ReadPropertyString('host')) {
-                    IPS_SetProperty($ParentID, 'Host', $this->ReadPropertyString('host'));
+        if($ParentID > 0) {
+            if(IPS_GetProperty($this->GetParent(), 'Host') != $this->ReadPropertyString('host')) {
+                IPS_SetProperty($ParentID, 'Host', $this->ReadPropertyString('host'));
+            }
+            if(IPS_GetProperty($ParentID, 'Open') != true) {
+                IPS_SetProperty($ParentID, 'Open', true);
+            }
+            if(IPS_HasChanges($ParentID))
+            {
+                $Result = @IPS_ApplyChanges($ParentID);
+                if($Result) {
+                    $this->log("ApplyChanges", "Einrichtung des Client Socket erfolgreich", 0);
                 }
-                if(IPS_GetProperty($ParentID, 'Open') != true) {
-                    IPS_SetProperty($ParentID, 'Open', true);
-                }
-                if(IPS_HasChanges($ParentID))
-                {
-                    $Result = @IPS_ApplyChanges($ParentID);
-                    if($Result) {
-                        $this->log("ApplyChanges", "Einrichtung des Client Socket erfolgreich", 0);
-                    }
-                    else{
-                        $this->log("ApplyChanges", "Einrichtung des Client Socket nicht erfolgreich!", 0);
-                    }
+                else{
+                    $this->log("ApplyChanges", "Einrichtung des Client Socket nicht erfolgreich!", 0);
                 }
             }
+        }
 */
-            $this->SetStatus(102);
-        }
-        else
-        {
-            //Device not pingable
-            $this->SetStatus(201);
-        }
+        $this->SetStatus(102);
     }
 
     public function GetConfigurationForParent(){
