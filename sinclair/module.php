@@ -64,11 +64,10 @@ class sinclair extends IPSModule {
         // Diese Zeile nicht löschen
         parent::ApplyChanges();
 
-        $host = IPS_GetProperty($this->GetParent(), 'Host');
         $fanSteps = $this->ReadPropertyInteger("fanSteps");
         $hasSwingLeRi = $this->ReadPropertyBoolean("swingLeRi");
         $hasFreshAir = $this->ReadPropertyBoolean("freshAir");
-        if (strlen($host) > 0)
+        if (@Sys_Ping(IPS_GetProperty($this->GetParent(), 'Host'), 1000))
         {
             //Instanz ist aktiv
             if(!IPS_VariableProfileExists('Sinclair.DeviceMode'))
@@ -236,7 +235,7 @@ class sinclair extends IPSModule {
         }
         else
         {
-            //Instanz ist aktiv
+            //Device not pingable
             $this->SetStatus(201);
         }
     }
@@ -367,10 +366,6 @@ class sinclair extends IPSModule {
 
             $this->cmdQueueWorker();
         }
-
-        //$this->SetBuffer('actualCommand', $type);
-
-        //$this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
 
         return true;
     }

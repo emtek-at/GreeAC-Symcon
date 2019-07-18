@@ -1,7 +1,6 @@
 {
   "translations": {
     "de": {
-      "formHost": "Host/IP",
       "formStatusTimer": "getStatus Intervall Sek.",
       "formFanSteps": "Ventilationsstufen",
       "formFanSteps3": "3 Stufen",
@@ -10,7 +9,7 @@
       "formFanSteps7": "7 Stufen",
       "formSwingLeRi": "Swing Links Rechts vorhanden",
       "formFreshAir": "Frischluftventil vorhanden",
-      "form201": "Host nicht angegeben",
+      "form201": "Host ist nicht pingbar",
       "form102": "Instanz ist aktiv",
       "varActualCommand": "cmd",
       "varDeviceKey": "DeviceKey",
@@ -64,7 +63,6 @@
       "paDeviceSwingerLeRi-6": "Fix Rechts"
     },
     "en": {
-      "formHost": "Host/IP",
       "formStatusTimer": "getStatus intervall sec.",
       "formFanSteps": "Ventilationsteps",
       "formFanSteps3": "3 steps",
@@ -74,7 +72,7 @@
       "formSwingLeRi": "has left right swinger",
       "formFreshAir": "has fresh air valve",
       "form102": "instance is active",
-      "form201": "Host is not set",
+      "form201": "Host is not pingable",
       "varActualCommand": "cmd",
       "varDeviceKey": "DeviceKey",
       "varPower": "powered on",
