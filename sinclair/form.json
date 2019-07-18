@@ -1,6 +1,7 @@
 {
   "elements":
   [
+    { "type": "CheckBox", "name": "active", "caption": "formActive" },
     { "type":  "Select", "name": "fanSteps", "caption": "formFanSteps",
       "options": [
         { "caption": "formFanSteps3", "value": 3 },

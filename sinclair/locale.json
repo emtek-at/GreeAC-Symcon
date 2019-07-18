@@ -1,6 +1,7 @@
 {
   "translations": {
     "de": {
+      "formActive": "Instanz aktivieren",
       "formStatusTimer": "getStatus Intervall Sek.",
       "formFanSteps": "Ventilationsstufen",
       "formFanSteps3": "3 Stufen",
@@ -64,6 +65,7 @@
       "paDeviceSwingerLeRi-6": "Fix Rechts"
     },
     "en": {
+      "formActive": "activate instance",
       "formStatusTimer": "getStatus intervall sec.",
       "formFanSteps": "Ventilationsteps",
       "formFanSteps3": "3 steps",

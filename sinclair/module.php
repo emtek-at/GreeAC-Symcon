@@ -46,6 +46,7 @@ class sinclair extends IPSModule {
         // Diese Zeile nicht löschen.
         parent::Create();
 
+        $this->RegisterPropertyBoolean("active", false);
         $this->RegisterPropertyInteger("fanSteps", 3);
         $this->RegisterPropertyBoolean("swingLeRi", false);
         $this->RegisterPropertyBoolean("freshAir", false);
@@ -212,33 +213,16 @@ class sinclair extends IPSModule {
 
         $statusInterval = $this->ReadPropertyInteger("statusTimer");
 
-        $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
         $this->SetBuffer("actualCommand", Commands::none);
         $this->SetBuffer('cmdQueue', serialize(array()));
 
-
-//            $ParentID = $this->GetParent();
-/*
-        if($ParentID > 0) {
-            if(IPS_GetProperty($this->GetParent(), 'Host') != $this->ReadPropertyString('host')) {
-                IPS_SetProperty($ParentID, 'Host', $this->ReadPropertyString('host'));
-            }
-            if(IPS_GetProperty($ParentID, 'Open') != true) {
-                IPS_SetProperty($ParentID, 'Open', true);
-            }
-            if(IPS_HasChanges($ParentID))
-            {
-                $Result = @IPS_ApplyChanges($ParentID);
-                if($Result) {
-                    $this->log("ApplyChanges", "Einrichtung des Client Socket erfolgreich", 0);
-                }
-                else{
-                    $this->log("ApplyChanges", "Einrichtung des Client Socket nicht erfolgreich!", 0);
-                }
-            }
+        if($this->ReadPropertyBoolean("active")){
+            $this->SetTimerInterval('status_UpdateTimer', $statusInterval*1000);
+            $this->SetStatus(102);
+        }else{
+            $this->SetTimerInterval('status_UpdateTimer', 0);
+            $this->SetStatus(104);
         }
-*/
-        $this->SetStatus(102);
     }
 
     public function GetConfigurationForParent(){
