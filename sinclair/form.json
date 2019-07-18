@@ -1,7 +1,6 @@
 {
   "elements":
   [
-    { "type": "ValidationTextBox", "name": "host", "caption": "formHost" },
     { "type":  "Select", "name": "fanSteps", "caption": "formFanSteps",
       "options": [
         { "caption": "formFanSteps3", "value": 3 },

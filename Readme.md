@@ -48,11 +48,18 @@ Falls das Gerät für die Dauer von 15*[getStatus Intervall Sek] nicht pingbar i
 
 - Unter "Instanz hinzufügen" ist das 'Sinclair AC Wifi'-Modul unter dem Hersteller 'Sinclair' aufgeführt.
 
+#### 4.1 Gateway konfigurieren
 __Konfigurationsseite__:
 
 Name       | Beschreibung
 ---------- | ---------------------------------
-Host/IP             | DNS oder IP Adresse des Wechselrichters
+Host/IP             | DNS oder IP Adresse des WLAN Moduls der Inneneinheit
+
+#### 4.2 Instanz konfigurieren
+__Konfigurationsseite__:
+
+Name       | Beschreibung
+---------- | ---------------------------------
 Ventilationsstufen  | Anzahl der Ventilationsstufen ohne Automodus (Anzahl der Balken auf der Fernbedienung)
 Swing Links-Rechts  | Ist ein motorisierter Links <-> Rechts Luftleiter vorhanden
 Frischluftventil    | Ist ein Frischluftventil vorhanden (meistens nicht)
@@ -87,7 +94,7 @@ DeviceKey           | String  | Key für die Verschlüsselung der Kommunikation.
 
 ##### Profile
 
-Nachfolgende Profile werden zusätzlichen hinzugefügt:
+Nachfolgende Profile werden zusätzlich hinzugefügt und bei jedem "Änderungen übernehmen" der Instanz neu abgespeichert:
 
 * Sinclair.DeviceMode
 * Sinclair.DeviceFan3

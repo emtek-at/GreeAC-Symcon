@@ -46,7 +46,7 @@ class sinclair extends IPSModule {
         // Diese Zeile nicht löschen.
         parent::Create();
 
-        $this->RegisterPropertyString("host", "127.0.0.1");
+        //$this->RegisterPropertyString("host", "127.0.0.1");
         $this->RegisterPropertyInteger("fanSteps", 3);
         $this->RegisterPropertyBoolean("swingLeRi", false);
         $this->RegisterPropertyBoolean("freshAir", false);
@@ -64,7 +64,7 @@ class sinclair extends IPSModule {
         // Diese Zeile nicht löschen
         parent::ApplyChanges();
 
-        $host = $this->ReadPropertyString("host");
+        $host = IPS_GetProperty($this->GetParent(), 'Host');
         $fanSteps = $this->ReadPropertyInteger("fanSteps");
         $hasSwingLeRi = $this->ReadPropertyBoolean("swingLeRi");
         $hasFreshAir = $this->ReadPropertyBoolean("freshAir");
@@ -211,10 +211,10 @@ class sinclair extends IPSModule {
             $this->SetBuffer('cmdQueue', serialize(array()));
 
 
-            $ParentID = $this->GetParent();
+//            $ParentID = $this->GetParent();
 /*
             if($ParentID > 0) {
-                if(IPS_GetProperty($ParentID, 'Host') != $this->ReadPropertyString('host')) {
+                if(IPS_GetProperty($this->GetParent(), 'Host') != $this->ReadPropertyString('host')) {
                     IPS_SetProperty($ParentID, 'Host', $this->ReadPropertyString('host'));
                 }
                 if(IPS_GetProperty($ParentID, 'Open') != true) {
@@ -242,7 +242,7 @@ class sinclair extends IPSModule {
     }
 
     public function GetConfigurationForParent(){
-        $JsonArray = array( "Host" => $this->ReadPropertyString('host'), "Port" => 7000, "Open" => true);
+        $JsonArray = array( "Port" => 7000, "Open" => true);
         $Json = json_encode($JsonArray);
         return $Json;
     }
@@ -382,7 +382,7 @@ class sinclair extends IPSModule {
             // queue is empty -> disable timer
             $this->SetTimerInterval('queue_WorkerTimer', 0);
             return;
-        }else if(!@Sys_Ping($this->ReadPropertyString('host'), 1000)){
+        }else if(!@Sys_Ping(IPS_GetProperty($this->GetParent(), 'Host'), 1000)){
             // device is not pingable -> retry in 10 seconds
             $this->log('QueueWorker', 'device not pingable', 0);
             $this->SetTimerInterval('queue_WorkerTimer', 10000);
@@ -397,7 +397,6 @@ class sinclair extends IPSModule {
 
             if($cmdWaitingTimeMilliSecs >= 10000) {
                 $this->resetCmd();
-                //$this->log($this->ReadPropertyString("host"), 'waiting too long '.$cmdWaitingTimeMilliSecs);
                 $this->SetTimerInterval('queue_WorkerTimer', 60000);
                 return;
             }else {
@@ -422,7 +421,6 @@ class sinclair extends IPSModule {
     }
 
     private function reduceCmdQueue(){
-        //($this->ReadPropertyString("host"),  'reduce ');
         $cmdQueue = $this->getCmdQueue();
         array_splice($cmdQueue, 0, 1);
         $this->setCmdQueue($cmdQueue);
@@ -735,7 +733,7 @@ class sinclair extends IPSModule {
     }
 
     private function log($name, $data){
-        IPS_LogMessage('Sinclair '.$name, $this->ReadPropertyString("host").': '.$data);
+        IPS_LogMessage('Sinclair '.$name, IPS_GetProperty($this->GetParent(), 'Host').': '.$data);
     }
 
     //------------------------------------------------------------------------------
