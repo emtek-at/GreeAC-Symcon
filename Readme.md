@@ -60,6 +60,7 @@ __Konfigurationsseite__:
 
 Name       | Beschreibung
 ---------- | ---------------------------------
+Instanz aktivieren  | Aktiviert die Instanz und den Aktualisierungstimer
 Ventilationsstufen  | Anzahl der Ventilationsstufen ohne Automodus (Anzahl der Balken auf der Fernbedienung)
 Swing Links-Rechts  | Ist ein motorisierter Links <-> Rechts Luftleiter vorhanden
 Frischluftventil    | Ist ein Frischluftventil vorhanden (meistens nicht)
