@@ -18,7 +18,7 @@
   ],
   "status":
   [
-    { "code": 101, "icon": "inactive", "caption": "form101" },
+    { "code": 104, "icon": "inactive", "caption": "form104" },
     { "code": 102, "icon": "active", "caption": "form102" },
     { "code": 201, "icon": "error", "caption": "form201" }
   ]
