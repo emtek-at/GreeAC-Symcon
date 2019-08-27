@@ -327,19 +327,19 @@ class sinclair extends IPSModule {
             foreach($cmdQueue as $cmd){
                 if($cmd['TYPE'] == Commands::status){
                     $bAddCmd = false;
-                    $this->log('sendCommand', 'status command already in queue', 0);
+                    $this->log('sendCommand', 'status command already in queue');
                     break;
                 }
             }
         }
         if(count($cmdQueue) > 5) {
-            log('sendCommand', 'more then 5 commands in queue', 0);
+            $this->log('sendCommand', 'more then 5 commands in queue');
             $bAddCmd = false;
         }
 
         // empty queue if init or bind commands are sent
         if($type == Commands::scan || $type == Commands::bind){
-            $this->log('sendCommand', 'sending '.($type == Commands::scan ? 'init' : 'bind').' command -> empty queue', 0);
+            $this->log('sendCommand', 'sending '.($type == Commands::scan ? 'init' : 'bind').' command -> empty queue');
             $this->resetCmd();
             $cmdQueue = array();
             $bAddCmd = true;
@@ -364,7 +364,7 @@ class sinclair extends IPSModule {
             return;
         }else if(!@Sys_Ping(IPS_GetProperty($this->GetParent(), 'Host'), 1000)){
             // device is not pingable -> retry in 10 seconds
-            $this->log('QueueWorker', 'device not pingable', 0);
+            $this->log('QueueWorker', 'device not pingable');
             $this->SetTimerInterval('queue_WorkerTimer', 10000);
             return;
         }else{
