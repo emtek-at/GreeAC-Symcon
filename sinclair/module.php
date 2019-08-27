@@ -72,10 +72,10 @@ class sinclair extends IPSModule {
         if(strlen($host) == 0){
             $this->SetStatus(104);
             return;
-        }else if(!@Sys_Ping($host, 1000)){
+        }/*else if(!@Sys_Ping($host, 1000)){
             $this->SetStatus(201);
             return;
-        }
+        }*/
 
         //Instanz ist aktiv
         if(!IPS_VariableProfileExists('Sinclair.DeviceMode'))
@@ -362,12 +362,12 @@ class sinclair extends IPSModule {
             // queue is empty -> disable timer
             $this->SetTimerInterval('queue_WorkerTimer', 0);
             return;
-        }else if(!@Sys_Ping(IPS_GetProperty($this->GetParent(), 'Host'), 1000)){
+        }/*else if(!@Sys_Ping(IPS_GetProperty($this->GetParent(), 'Host'), 1000)){
             // device is not pingable -> retry in 10 seconds
             $this->log('QueueWorker', 'device not pingable');
             $this->SetTimerInterval('queue_WorkerTimer', 10000);
             return;
-        }else{
+        }*/else{
             $this->SetTimerInterval('queue_WorkerTimer', 1000);
         }
 
