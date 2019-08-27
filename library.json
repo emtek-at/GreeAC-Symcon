@@ -1,13 +1,13 @@
 {
   "id": "{EF4B10AA-426A-4F37-A524-5B9AA681041F}",
-  "author": "Bernhard Engelmaier",
+  "author": "emtek e.U.",
   "name": "sinclair",
   "url": "",
   "compatibility": {
     "version": "5.0",
     "date": 1491343200
   },
-  "version": "1.8",
+  "version": "1.9",
   "build": 0,
   "date": 0
 }
