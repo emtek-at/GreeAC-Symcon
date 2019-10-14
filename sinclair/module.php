@@ -1,4 +1,5 @@
-<?
+<?php
+
 abstract class Commands
 {
     const none = '-1';
