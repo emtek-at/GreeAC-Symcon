@@ -55,7 +55,7 @@ class sinclair extends IPSModule {
         $this->RegisterPropertyInteger("fanSteps", 3);
         $this->RegisterPropertyBoolean("swingLeRi", false);
         $this->RegisterPropertyBoolean("freshAir", false);
-        $this->RegisterPropertyBoolean("formAutoLight", true);
+        $this->RegisterPropertyBoolean("autoLight", true);
         $this->RegisterPropertyBoolean("logInfo", false);
         $this->RegisterPropertyInteger("statusTimer", 60);
 
