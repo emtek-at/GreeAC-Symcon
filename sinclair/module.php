@@ -28,9 +28,14 @@ abstract class DeviceParam
     const OptTurbo = "Tur";
 }
 
+abstract class LogType
+{
+    const INFO = 0;
+    const ERROR = 10;
+}
+
 // Klassendefinition
 class sinclair extends IPSModule {
-    const debug = false;
     const defaultCryptKey = 'a3K8Bx%2r8Y7#xDh';
 
 
@@ -50,6 +55,8 @@ class sinclair extends IPSModule {
         $this->RegisterPropertyInteger("fanSteps", 3);
         $this->RegisterPropertyBoolean("swingLeRi", false);
         $this->RegisterPropertyBoolean("freshAir", false);
+        $this->RegisterPropertyBoolean("formAutoLight", true);
+        $this->RegisterPropertyBoolean("logInfo", false);
         $this->RegisterPropertyInteger("statusTimer", 60);
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'Sinclair_getStatus($_IPS[\'TARGET\']);');
@@ -327,19 +334,19 @@ class sinclair extends IPSModule {
             foreach($cmdQueue as $cmd){
                 if($cmd['TYPE'] == Commands::status){
                     $bAddCmd = false;
-                    $this->log('sendCommand', 'status command already in queue');
+                    $this->log('sendCommand', 'status command already in queue', LogType::INFO);
                     break;
                 }
             }
         }
         if(count($cmdQueue) > 5) {
-            $this->log('sendCommand', 'more then 5 commands in queue');
+            $this->log('sendCommand', 'more then 5 commands in queue', LogType::INFO);
             $bAddCmd = false;
         }
 
         // empty queue if init or bind commands are sent
         if($type == Commands::scan || $type == Commands::bind){
-            $this->log('sendCommand', 'sending '.($type == Commands::scan ? 'init' : 'bind').' command -> empty queue');
+            $this->log('sendCommand', 'sending '.($type == Commands::scan ? 'init' : 'bind').' command -> empty queue', LogType::INFO);
             $this->resetCmd();
             $cmdQueue = array();
             $bAddCmd = true;
@@ -393,7 +400,7 @@ class sinclair extends IPSModule {
             $this->setCmdQueue($cmdQueue);
             $this->SendDataToParent(json_encode(Array("DataID" => "{79827379-F36E-4ADA-8A95-5F8D1DC92FA9}", "Buffer" => json_encode($cmdArr))));
         }catch (Exception $e){
-            $this->log('QueueWorker', $e->getMessage());
+            $this->log('QueueWorker', $e->getMessage(), LogType::ERROR);
 
             // set to none command to prevent blocking
             $this->resetCmd();
@@ -447,7 +454,7 @@ class sinclair extends IPSModule {
         $maxAge = $this->ReadPropertyInteger('statusTimer') * 15;
         if(empty(GetValueString($this->GetIDForIdent('deviceKey')))
             || ($maxAge > 0 && $lastStatusUpdateAgeSec > $maxAge)){
-            $this->log('getStatus', 'device key is empty or last update is more than '.$maxAge.' seconds ago -> init device');
+            $this->log('getStatus', 'device key is empty or last update is more than '.$maxAge.' seconds ago -> init device', LogType::INFO);
             $this->initDevice();
             return;
         }
@@ -481,6 +488,10 @@ class sinclair extends IPSModule {
         $opts = array();
         $vals = array();
 
+        $newOptLight = GetValueBoolean($this->GetIDForIdent('optLight'));
+        if($this->ReadPropertyBoolean("autoLight"))
+            $newOptLight = $newVal;
+
         $opts[] = DeviceParam::Power;
         $opts[] = DeviceParam::OptSleep1;
         $opts[] = DeviceParam::OptSleep2;
@@ -506,7 +517,7 @@ class sinclair extends IPSModule {
         $vals[] = GetValueInteger($this->GetIDForIdent('setTemp'));
         $vals[] = GetValueBoolean($this->GetIDForIdent('optXFan')) ? 1 : 0;
         $vals[] = GetValueBoolean($this->GetIDForIdent('optHealth')) ? 1 : 0;
-        $vals[] = GetValueBoolean($this->GetIDForIdent('optLight')) ? 1 : 0;
+        $vals[] = $newOptLight ? 1 : 0;
         $vals[] = GetValueBoolean($this->GetIDForIdent('optEco')) ? 1 : 0;
 
         if($this->ReadPropertyBoolean("swingLeRi")) {
@@ -707,13 +718,15 @@ class sinclair extends IPSModule {
         );
     }
 
-    private function debug($name, $data){
-        if(self::debug)
-            $this->SendDebug($name, $data, 0);
-    }
 
-    private function log($name, $data){
-        IPS_LogMessage('Sinclair '.$name, IPS_GetProperty($this->GetParent(), 'Host').': '.$data);
+    private function log($name, $data, LogType $logLevel){
+        $bLog = true;
+
+        if($logLevel == LogType::INFO && !$this->ReadPropertyBoolean("logInfo"))
+            $bLog = false;
+
+        if($bLog)
+            IPS_LogMessage('Sinclair '.$name, IPS_GetProperty($this->GetParent(), 'Host').': '.$data);
     }
 
     //------------------------------------------------------------------------------
@@ -730,7 +743,7 @@ class sinclair extends IPSModule {
             $instance = IPS_GetInstance($id);
             $parent = $instance['ConnectionID'];
         } else {
-            $this->debug(__FUNCTION__, "Instance #$id doesn't exists");
+            $this->log('GetParent', "Instance #$id doesn't exists", LogType::ERROR);
         }
         return $parent;
     }

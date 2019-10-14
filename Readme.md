@@ -64,6 +64,8 @@ Instanz aktivieren  | Aktiviert die Instanz und den Aktualisierungstimer
 Ventilationsstufen  | Anzahl der Ventilationsstufen ohne Automodus (Anzahl der Balken auf der Fernbedienung)
 Swing Links-Rechts  | Ist ein motorisierter Links <-> Rechts Luftleiter vorhanden
 Frischluftventil    | Ist ein Frischluftventil vorhanden (meistens nicht)
+Geräte Licht automatisch ein-/ausschalten   | schaltet das Licht am Gerät ein oder aus, je nach dem ob das Gerät selbst ein- oder ausgeschalten ist
+Infos loggen        | schreibt Infos in das Symcon Log
 getStatus Intervall Sek. | Aktualisierungs Intervall
 
 

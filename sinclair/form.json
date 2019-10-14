@@ -11,6 +11,8 @@
       ]},
     { "type": "CheckBox", "name": "swingLeRi", "caption": "formSwingLeRi" },
     { "type": "CheckBox", "name": "freshAir", "caption": "formFreshAir" },
+    { "type": "CheckBox", "name": "autoLight", "caption": "formAutoLight" },
+    { "type": "CheckBox", "name": "logInfo", "caption": "formInfoLogging" },
     { "type": "NumberSpinner", "name": "statusTimer", "caption": "formStatusTimer" }
   ],
   "actions":
