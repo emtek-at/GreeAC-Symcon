@@ -720,7 +720,7 @@ class sinclair extends IPSModule {
     }
 
 
-    private function log($name, $data, LogType $logLevel){
+    private function log($name, $data, $logLevel){
         $bLog = true;
 
         if($logLevel == LogType::INFO && !$this->ReadPropertyBoolean("logInfo"))
