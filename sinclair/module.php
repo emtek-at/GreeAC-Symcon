@@ -78,7 +78,7 @@ class sinclair extends IPSModule {
         $hasFreshAir = $this->ReadPropertyBoolean("freshAir");
 
         if(strlen($host) == 0){
-            $this->SetStatus(104);
+            $this->SetStatus(201);
             return;
         }/*else if(!@Sys_Ping($host, 1000)){
             $this->SetStatus(201);
