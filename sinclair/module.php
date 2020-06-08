@@ -72,18 +72,18 @@ class sinclair extends IPSModule {
         // Diese Zeile nicht löschen
         parent::ApplyChanges();
 
-        $host = IPS_GetProperty($this->GetParent(), 'Host');
+        //$host = IPS_GetProperty($this->GetParent(), 'Host');
         $fanSteps = $this->ReadPropertyInteger("fanSteps");
         $hasSwingLeRi = $this->ReadPropertyBoolean("swingLeRi");
         $hasFreshAir = $this->ReadPropertyBoolean("freshAir");
 
-        if(strlen($host) == 0){
-            $this->SetStatus(201);
-            return;
-        }/*else if(!@Sys_Ping($host, 1000)){
-            $this->SetStatus(201);
-            return;
-        }*/
+        //if(strlen($host) == 0){
+        //    $this->SetStatus(201);
+        //    return;
+        //}/*else if(!@Sys_Ping($host, 1000)){
+        //    $this->SetStatus(201);
+        //    return;
+        //}*/
 
         //Instanz ist aktiv
         if(!IPS_VariableProfileExists('Sinclair.DeviceMode'))
