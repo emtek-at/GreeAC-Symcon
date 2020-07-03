@@ -602,6 +602,7 @@ class sinclair extends IPSModule {
         $this->beepCount = $beepCount;
         $this->beepTimeout = $beepTimeout;
         $this->beepCounter = $maxBeeps;
+        IPS_LogMessage('klima beepExStart', 'beepCount '.$this->beepCount.' beepCounter '.$this->beepCounter);
 
         $this->beepRunner($repeatSeconds*1000);
     }
@@ -610,6 +611,7 @@ class sinclair extends IPSModule {
         $this->beepCount = 0;
         $this->beepTimeout = 0;
         $this->beepCounter = 0;
+        IPS_LogMessage('klima beepExStop', 'stop');
     }
     public function beepRunner(int $setTimer){
         for($i=0;$i<$this->beepCount;$i++){
