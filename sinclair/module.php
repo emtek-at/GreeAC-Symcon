@@ -38,6 +38,9 @@ abstract class LogType
 // Klassendefinition
 class sinclair extends IPSModule {
     const defaultCryptKey = 'a3K8Bx%2r8Y7#xDh';
+    private $beepCount = 0;
+    private $beepTimeout = 0;
+    private $beepCounter = 0;
 
 
     // Der Konstruktor des Moduls
@@ -62,6 +65,7 @@ class sinclair extends IPSModule {
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'Sinclair_getStatus($_IPS[\'TARGET\']);');
         $this->RegisterTimer("queue_WorkerTimer", 0, 'Sinclair_cmdQueueWorker($_IPS[\'TARGET\']);');
+        $this->RegisterTimer("beepRunnerTimer", 0, 'Sinclair_beepRunner($_IPS[\'TARGET\']);');
 
 
         $this->RequireParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
@@ -586,6 +590,38 @@ class sinclair extends IPSModule {
 
     public function beep(){
         $this->setOptLight(GetValueBoolean($this->GetIDForIdent('optHealth')));
+    }
+
+    /**
+     * @param int $beepCount How often beep at once
+     * @param $beepTimeout Timeout between beeps in Milliseconds
+     * @param $repeatSeconds Repeat beep all X Seconds
+     * @param $maxBeeps Stop Repeat after X Times
+     */
+    public function beepExStart($beepCount, $beepTimeout, $repeatSeconds, $maxBeeps){
+        $this->beepCount = $beepCount;
+        $this->beepTimeout = $beepTimeout;
+        $this->beepCounter = $maxBeeps;
+
+        $this->beepRunner($repeatSeconds*1000);
+    }
+    public function beepExStop(){
+        $this->SetTimerInterval('beepRunnerTimer', 0);
+        $this->beepCount = 0;
+        $this->beepTimeout = 0;
+        $this->beepCounter = 0;
+    }
+    public function beepRunner($setTimer=0){
+        for($i=0;$i<$this->beepCount;$i++){
+            $this->beep();
+            IPS_Sleep($this->beepTimeout);
+        }
+
+        $this->beepCounter--;
+        if($this->beepCounter <= 0)
+            $this->SetTimerInterval('beepRunnerTimer', 0);
+        else if($setTimer > 0)
+            $this->SetTimerInterval('beepRunnerTimer', $setTimer);
     }
 
 
