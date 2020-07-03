@@ -105,8 +105,8 @@ class sinclair extends IPSModule {
 
         IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
         IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
-        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 2, $this->Translate("paDeviceFan-2"), 'Speedo-50', -1);
-        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 3, $this->Translate("paDeviceFan-3"), 'Speedo-100', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 3, $this->Translate("paDeviceFan-2"), 'Speedo-50', -1);
+        IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 5, $this->Translate("paDeviceFan-3"), 'Speedo-100', -1);
 
         IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
         IPS_SetVariableProfileAssociation('Sinclair.DeviceFan5', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
@@ -503,7 +503,7 @@ class sinclair extends IPSModule {
         $vals[] = 0;
         $vals[] = 0;
         $vals[] = GetValueInteger($this->GetIDForIdent('mode'));
-        $vals[] = GetValueInteger($this->GetIDForIdent('fan'));
+        $vals[] = $this->checkFanStep(GetValueInteger($this->GetIDForIdent('fan')));
         $vals[] = 0;
         $vals[] = 0;
         $vals[] = GetValueInteger($this->GetIDForIdent('swinger'));
@@ -530,8 +530,7 @@ class sinclair extends IPSModule {
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
     }
     public function setFan(int $newVal){
-        if($newVal < 0 || $newVal > $this->ReadPropertyInteger("fanSteps"))
-            return;
+        $newVal = $this->checkFanStep($newVal);
 
         $cmd = $this->getCommand(array(DeviceParam::Fanspeed, "Quiet", "Tur"), array($newVal, 0, 0));
         $this->sendCommand(Commands::cmd, $this->getRequest($cmd, false));
@@ -711,6 +710,29 @@ class sinclair extends IPSModule {
         );
     }
 
+    private function checkFanStep($fanStep){
+        $allowedValues = array();
+        switch($this->ReadPropertyInteger("fanSteps")){
+            case 3:
+                $allowedValues = array(0, 1, 3, 5);
+                break;
+            case 5:
+                $allowedValues = array(0, 1, 2, 3, 4, 5);
+                break;
+            case 6:
+                $allowedValues = array(0, 1, 2, 3, 4, 5, 6);
+                break;
+            case 7:
+                $allowedValues = array(0, 1, 2, 3, 4, 5, 6, 7);
+                break;
+        }
+
+        if(!in_array($fanStep, $allowedValues)){
+            throw new Exception('available Fan steps are: '.implode(',', $allowedValues));
+        }
+
+        return $fanStep;
+    }
 
     private function log($name, $data, $logLevel){
         $bLog = true;
