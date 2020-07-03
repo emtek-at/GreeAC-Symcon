@@ -65,19 +65,8 @@ class sinclair extends IPSModule {
 
 
         $this->RequireParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
-    }
-
-    // Überschreibt die intere IPS_ApplyChanges($id) Funktion
-    public function ApplyChanges() {
-        // Diese Zeile nicht löschen
-        parent::ApplyChanges();
-
-        $fanSteps = $this->ReadPropertyInteger("fanSteps");
-        $hasSwingLeRi = $this->ReadPropertyBoolean("swingLeRi");
-        $hasFreshAir = $this->ReadPropertyBoolean("freshAir");
 
 
-        //Instanz ist aktiv
         if(!IPS_VariableProfileExists('Sinclair.DeviceMode'))
             IPS_CreateVariableProfile('Sinclair.DeviceMode', 1);
         if(!IPS_VariableProfileExists('Sinclair.DeviceFan3'))
@@ -103,6 +92,7 @@ class sinclair extends IPSModule {
         IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 3, $this->Translate("paDeviceMode-3"), 'Ventilation', -1);
         IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 4, $this->Translate("paDeviceMode-4"), 'Flame', -1);
 
+        IPS_SetVariableProfileAssociation("Sinclair.DeviceFan3", 2, "", "", -1);
         IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
         IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
         IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 3, $this->Translate("paDeviceFan-2"), 'Speedo-50', -1);
@@ -157,6 +147,17 @@ class sinclair extends IPSModule {
         IPS_SetVariableProfileText('Sinclair.SetTemp', '', '°C');
 
         IPS_SetVariableProfileText('Sinclair.ActTemp', '', '°C');
+    }
+
+    // Überschreibt die intere IPS_ApplyChanges($id) Funktion
+    public function ApplyChanges() {
+        // Diese Zeile nicht löschen
+        parent::ApplyChanges();
+
+        $fanSteps = $this->ReadPropertyInteger("fanSteps");
+        $hasSwingLeRi = $this->ReadPropertyBoolean("swingLeRi");
+        $hasFreshAir = $this->ReadPropertyBoolean("freshAir");
+
 
         $this->RegisterVariableString("name", $this->Translate("varName"), '', 1);
         $this->RegisterVariableBoolean("power", $this->Translate("varPower"), '~Switch', 2);
