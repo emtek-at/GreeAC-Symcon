@@ -618,10 +618,14 @@ class sinclair extends IPSModule {
         }
 
         $this->beepCounter--;
-        if($this->beepCounter <= 0)
+        IPS_LogMessage('klima', 'beepCounter '.$this->beepCounter.' setTimer'.$setTimer);
+        if($this->beepCounter <= 0) {
             $this->SetTimerInterval('beepRunnerTimer', 0);
-        else if($setTimer > 0)
+            IPS_LogMessage('klima', 'beepCounter <= 0');
+        }else if($setTimer > 0) {
             $this->SetTimerInterval('beepRunnerTimer', $setTimer);
+            IPS_LogMessage('klima', 'setTimer > 0 ');
+        }
     }
 
 
