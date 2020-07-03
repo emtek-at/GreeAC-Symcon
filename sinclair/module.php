@@ -92,9 +92,12 @@ class sinclair extends IPSModule {
         IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 3, $this->Translate("paDeviceMode-3"), 'Ventilation', -1);
         IPS_SetVariableProfileAssociation('Sinclair.DeviceMode', 4, $this->Translate("paDeviceMode-4"), 'Flame', -1);
 
-        try {
+        $profileValues = array();
+        foreach(IPS_GetVariableProfile("Sinclair.DeviceFan3")['Associations'] as $ass){
+            $profileValues[] = $ass['Value'];
+        }
+        if(in_array(2, $profileValues))
             IPS_SetVariableProfileAssociation("Sinclair.DeviceFan3", 2, "", "", -1);
-        }catch (Exception $e){}
         IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 0, $this->Translate("paDeviceFan-0"), 'Ventilation', -1);
         IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 1, $this->Translate("paDeviceFan-1"), 'Speedo-0', -1);
         IPS_SetVariableProfileAssociation('Sinclair.DeviceFan3', 3, $this->Translate("paDeviceFan-2"), 'Speedo-50', -1);
@@ -715,19 +718,8 @@ class sinclair extends IPSModule {
 
     private function checkFanStep($fanStep){
         $allowedValues = array();
-        switch($this->ReadPropertyInteger("fanSteps")){
-            case 3:
-                $allowedValues = array(0, 1, 3, 5);
-                break;
-            case 5:
-                $allowedValues = array(0, 1, 2, 3, 4, 5);
-                break;
-            case 6:
-                $allowedValues = array(0, 1, 2, 3, 4, 5, 6);
-                break;
-            case 7:
-                $allowedValues = array(0, 1, 2, 3, 4, 5, 6, 7);
-                break;
+        foreach(IPS_GetVariableProfile("Sinclair.DeviceFan".$this->ReadPropertyInteger("fanSteps"))['Associations'] as $ass){
+            $allowedValues[] = $ass['Value'];
         }
 
         if(!in_array($fanStep, $allowedValues)){
