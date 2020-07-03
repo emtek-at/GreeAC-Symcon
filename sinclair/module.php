@@ -65,7 +65,7 @@ class sinclair extends IPSModule {
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'Sinclair_getStatus($_IPS[\'TARGET\']);');
         $this->RegisterTimer("queue_WorkerTimer", 0, 'Sinclair_cmdQueueWorker($_IPS[\'TARGET\']);');
-        $this->RegisterTimer("beepRunnerTimer", 0, 'Sinclair_beepRunner($_IPS[\'TARGET\']);');
+        $this->RegisterTimer("beepRunnerTimer", 0, 'Sinclair_beepRunner($_IPS[\'TARGET\'], 0);');
 
 
         $this->RequireParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
@@ -611,7 +611,7 @@ class sinclair extends IPSModule {
         $this->beepTimeout = 0;
         $this->beepCounter = 0;
     }
-    public function beepRunner(int $setTimer=0){
+    public function beepRunner(int $setTimer){
         for($i=0;$i<$this->beepCount;$i++){
             $this->beep();
             IPS_Sleep($this->beepTimeout);
