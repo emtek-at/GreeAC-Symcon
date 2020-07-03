@@ -594,11 +594,11 @@ class sinclair extends IPSModule {
 
     /**
      * @param int $beepCount How often beep at once
-     * @param $beepTimeout Timeout between beeps in Milliseconds
-     * @param $repeatSeconds Repeat beep all X Seconds
-     * @param $maxBeeps Stop Repeat after X Times
+     * @param int $beepTimeout Timeout between beeps in Milliseconds
+     * @param int $repeatSeconds Repeat beep all X Seconds
+     * @param int $maxBeeps Stop Repeat after X Times
      */
-    public function beepExStart($beepCount, $beepTimeout, $repeatSeconds, $maxBeeps){
+    public function beepExStart(int $beepCount, int $beepTimeout, int $repeatSeconds, int $maxBeeps){
         $this->beepCount = $beepCount;
         $this->beepTimeout = $beepTimeout;
         $this->beepCounter = $maxBeeps;
@@ -611,7 +611,7 @@ class sinclair extends IPSModule {
         $this->beepTimeout = 0;
         $this->beepCounter = 0;
     }
-    public function beepRunner($setTimer=0){
+    public function beepRunner(int $setTimer=0){
         for($i=0;$i<$this->beepCount;$i++){
             $this->beep();
             IPS_Sleep($this->beepTimeout);
