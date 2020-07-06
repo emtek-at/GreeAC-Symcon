@@ -61,7 +61,7 @@ class sinclair extends IPSModule {
 
         $this->RegisterTimer("status_UpdateTimer", 0, 'Sinclair_getStatus($_IPS[\'TARGET\']);');
         $this->RegisterTimer("queue_WorkerTimer", 0, 'Sinclair_cmdQueueWorker($_IPS[\'TARGET\']);');
-        $this->RegisterTimer("beepRunnerTimer", 0, 'Sinclair_beepRunner($_IPS[\'TARGET\'], 0);');
+        $this->RegisterTimer("beepRunnerTimer", 0, 'Sinclair_beepRunner($_IPS[\'TARGET\']);');
 
 
         $this->RequireParent("{82347F20-F541-41E1-AC5B-A636FD3AE2D8}");
@@ -595,14 +595,12 @@ class sinclair extends IPSModule {
      * @param int $maxBeeps Stop Repeat after X Times
      */
     public function beepExStart(int $beepCount, int $beepTimeout, int $repeatSeconds, int $maxBeeps){
-        if($this->GetTimerInterval('beepRunnerTimer') != 0)
-            return;
-
         $this->SetBuffer('beepCount', $beepCount);
         $this->SetBuffer('beepTimeout', $beepTimeout);
         $this->SetBuffer('beepCounter', $maxBeeps);
 
-        $this->beepRunner($repeatSeconds*1000);
+        $this->SetTimerInterval('beepRunnerTimer', $repeatSeconds*1000);
+        $this->beepRunner();
     }
     public function beepExStop(){
         $this->SetTimerInterval('beepRunnerTimer', 0);
@@ -610,7 +608,7 @@ class sinclair extends IPSModule {
         $this->SetBuffer('beepTimeout', 0);
         $this->SetBuffer('beepCounter', 0);
     }
-    public function beepRunner(int $setTimer){
+    public function beepRunner(){
         for($i=0;$i<$this->GetBuffer('beepCount');$i++){
             $this->beep();
             IPS_Sleep($this->GetBuffer('beepTimeout'));
@@ -622,10 +620,6 @@ class sinclair extends IPSModule {
 
         if($beepCounter <= 0) {
             $this->SetTimerInterval('beepRunnerTimer', 0);
-            IPS_LogMessage('klima', 'beepCounter <= 0');
-        }else if($setTimer > 0) {
-            $this->SetTimerInterval('beepRunnerTimer', $setTimer);
-            IPS_LogMessage('klima', 'setTimer > 0 ');
         }
     }
 
