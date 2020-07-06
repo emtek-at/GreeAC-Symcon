@@ -593,8 +593,12 @@ class sinclair extends IPSModule {
      * @param int $beepTimeout Timeout between beeps in Milliseconds
      * @param int $repeatSeconds Repeat beep all X Seconds
      * @param int $maxBeeps Stop Repeat after X Times
+     * @param bool $force restart even if actual beep is not finished
      */
-    public function beepExStart(int $beepCount, int $beepTimeout, int $repeatSeconds, int $maxBeeps){
+    public function beepExStart(int $beepCount, int $beepTimeout, int $repeatSeconds, int $maxBeeps, bool $force){
+        if(!$force && $this->GetTimerInterval('beepRunnerTimer') > 0)
+            return;
+
         $this->SetBuffer('beepCount', $beepCount);
         $this->SetBuffer('beepTimeout', $beepTimeout);
         $this->SetBuffer('beepCounter', $maxBeeps);
