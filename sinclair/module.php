@@ -38,10 +38,6 @@ abstract class LogType
 // Klassendefinition
 class sinclair extends IPSModule {
     const defaultCryptKey = 'a3K8Bx%2r8Y7#xDh';
-    private $beepCount = 0;
-    private $beepTimeout = 0;
-    private $beepCounter = 0;
-
 
     // Der Konstruktor des Moduls
     // Überschreibt den Standard Kontruktor von IPS
@@ -599,30 +595,32 @@ class sinclair extends IPSModule {
      * @param int $maxBeeps Stop Repeat after X Times
      */
     public function beepExStart(int $beepCount, int $beepTimeout, int $repeatSeconds, int $maxBeeps){
-        $this->beepCount = $beepCount;
-        $this->beepTimeout = $beepTimeout;
-        $this->beepCounter = $maxBeeps;
-        IPS_LogMessage('klima beepExStart', 'beepCount '.$this->beepCount.' beepCounter '.$this->beepCounter);
+        $this->SetBuffer('beepCount', $beepCount);
+        $this->SetBuffer('beepTimeout', $beepTimeout);
+        $this->SetBuffer('beepCounter', $maxBeeps);
+        IPS_LogMessage('klima beepExStart', 'beepCount '.$beepCount.' beepCounter '.$maxBeeps);
 
         $this->beepRunner($repeatSeconds*1000);
     }
     public function beepExStop(){
         $this->SetTimerInterval('beepRunnerTimer', 0);
-        $this->beepCount = 0;
-        $this->beepTimeout = 0;
-        $this->beepCounter = 0;
+        $this->SetBuffer('beepCount', 0);
+        $this->SetBuffer('beepTimeout', 0);
+        $this->SetBuffer('beepCounter', 0);
         IPS_LogMessage('klima beepExStop', 'stop');
     }
     public function beepRunner(int $setTimer){
-        for($i=0;$i<$this->beepCount;$i++){
+        for($i=0;$i<$this->GetBuffer('beepCount');$i++){
             $this->beep();
             IPS_LogMessage('klima', 'pieps');
-            IPS_Sleep($this->beepTimeout);
+            IPS_Sleep($this->GetBuffer('beepTimeout'));
         }
 
-        $this->beepCounter = $this->beepCounter-1;
-        IPS_LogMessage('klima', 'beepCount '.$this->beepCount.' beepCounter '.$this->beepCounter.' setTimer '.$setTimer);
-        if($this->beepCounter <= 0) {
+        $beepCounter = $this->GetBuffer('beepCounter');
+        $beepCounter--;
+        $this->SetBuffer('beepCounter', $beepCounter);
+        IPS_LogMessage('klima', 'beepCount '.$this->GetBuffer('beepCount').' beepCounter '.$beepCounter.' setTimer '.$setTimer);
+        if($beepCounter <= 0) {
             $this->SetTimerInterval('beepRunnerTimer', 0);
             IPS_LogMessage('klima', 'beepCounter <= 0');
         }else if($setTimer > 0) {
