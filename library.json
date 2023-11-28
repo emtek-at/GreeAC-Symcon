@@ -2,12 +2,11 @@
   "id": "{EF4B10AA-426A-4F37-A524-5B9AA681041F}",
   "author": "emtek e.U.",
   "name": "sinclair",
-  "url": "",
+  "url": "https://github.com/emtek-at/GreeAC-Symcon",
   "compatibility": {
-    "version": "5.0",
-    "date": 1491343200
+    "version": "6.4"
   },
-  "version": "2.1.3.2",
+  "version": "2.1.3.3",
   "build": 0,
   "date": 0
 }
